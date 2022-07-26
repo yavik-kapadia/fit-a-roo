@@ -1,0 +1,30 @@
+<%- include("partials/header") %>
+  <div class="content">
+<!-- Hero -->
+<div class="p-5 text-center bg-image" style="
+    background-image: url('../img/hero/hero1.webp');
+    height: 400px;
+  ">
+  <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
+    <div class="d-flex justify-content-center align-items-center h-70">
+      <div class="text-white">
+        <h1 class="mb-3">Fit-a-roo</h1>
+        <h4 class="mb-3">Getting fit made easy.</h4>
+        <a class="btn btn-outline-light btn-lg" href="/signup" role="button">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Hero -->
+<div>
+  <div class="form-group">
+   <select name="exercises">
+    <% for(exercise of exercises){ %>
+      <option id ="<%=exercise.id%>" value="<%=exercise.name%>">
+        <%=exercise.name%>
+      </option>
+    <%}%>
+   </select>   
+    </div>
+</div>    
+ </div>

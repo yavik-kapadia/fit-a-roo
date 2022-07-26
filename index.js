@@ -6,8 +6,15 @@ app.use(express.static('public'));
 
 
 //routes
+app.get("/dbTest", async function(req, res) {
+  let sql = "SELECT * FROM exercises";
+  let rows = await executeSQL(sql);
+  res.send(rows);
+});
 app.get("/", async (req, res) => {
-    res.render("index",);
+  let sql = `SELECT id, name FROM fitness_exercises;`;
+  let rows = await executeSQL(sql);
+  res.render("index",{exercises:rows});
 
 });
 //functions
