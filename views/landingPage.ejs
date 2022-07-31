@@ -1,0 +1,31 @@
+<!--- Landing page --->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include("partials/header.ejs")%>
+  <title>Landing Page</title>
+
+</head>
+<body>
+  <p>
+  Welcome, 
+  <%= userId[0].firstName %> <br>
+
+  <h2>Previous Workout Stats:</h2>
+    <p>Last login: </p>
+    <p>Last workout: </p>
+    <p>Last duration: </p>
+
+  <a href="/workingout?userId=<%=userId[0].userId%>">Start New Workout</a> <br><br><br>
+  
+  <a href="/profile/edit?userId=<%=userId[0].userId%>">Update Profile</a> <br>
+  
+  <a href="/profile/delete?userId=<%=userId[0].userId%>">Delete Profile</a> <br>
+
+  </p>
+  
+</body>
+<footer>
+  <%- include("partials/footer.ejs")%>
+</footer>
+</html>

@@ -1,0 +1,29 @@
+<!--- sign up --->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include("partials/header.ejs")%>
+  <title>Login</title>
+</head>
+<body>
+  <p>Sign Up</p>
+  <form method="POST" action="/user/new">
+    <h2>First Name:</h2>
+    <input type="text" class="form-control" name="fName"><br>  
+    <h2>Last Name:</h2>
+    <h2><input type="text" class="form-control" name="lName"><br>
+    <h2>Date of Birth:</h2>
+    <input type="date" class="form-control" name="birthDate"><br>  
+    <h2>Email:</h2>
+    <input type="email" class="form-control" name="email"><br>  
+    <h2>Password:</h2>
+    <input type="password" class="form-control" name="password"><br>  
+    <h2>Goals:</h2>
+    <input type="text" class="form-control" name="goals"><br>  
+    <button>Sign Up</button>
+  </form>
+</body>
+<footer>
+  <%- include("partials/footer.ejs")%>
+</footer>
+</html>

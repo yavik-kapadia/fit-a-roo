@@ -1,2 +1,24 @@
 <!-- allow user to add a workout to database-->
 <!-- need to design a db for this-->
+
+<%- include("partials/header.ejs")%>
+
+  <h2><%= userInfo[0].firstName %>'s Workout</h2>
+  <a href="/profile?userId=<%=userInfo[0].userId%>">Back to Profile</a>
+   <br>
+
+  <center>
+    <div id="timer">
+      <span id="hours">00:</span>
+      <span id="mins">00:</span>
+      <span id="seconds">00</span>  
+    </div>
+    <div id="controls">
+    <button id="start">Start</button>
+    <button id="stop">Stop</button>
+    <button id="reset">Reset</button>
+    </div>
+  </center>
+
+<%- include("partials/footer.ejs")%>
+  

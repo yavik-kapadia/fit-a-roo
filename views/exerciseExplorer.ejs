@@ -1,6 +1,43 @@
+<%- include("partials/header.ejs")%>
+
 <!--- This page is for viewing how to perform an exercise  maybe have a simple page where uses can search through
 different exercises in the db -->
+<br><br>
+  <div class="d-flex justify-content-center">
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Target
+      </button>
+      <ul class="dropdown-menu">
+        <% for (target of targets) { %>
+        <li><a class="dropdown-item" href="#" name="target" id="<%=target.target%>"><%=target.target%></a></li>
+          <% } %>
+      </ul>
+    </div>
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Body Part
+      </button>
+      <ul class="dropdown-menu">
+        <% for (part of parts) { %>
+        <li><a class="dropdown-item" href="#" name="bodyPart" id="<%=part.bodyPart%>"><%=part.bodyPart%></a></li>
+          <% } %>
+      </ul>
+    </div> 
+    <div class="input-group mb-3 w-25" id="searchExercise">
+      <input type="text" class="form-control" placeholder="search" aria-label="search" aria-describedby="button-addon2" id="keyword">
+      <button class="btn btn-outline-secondary" type="button" id="button-addon2" name="searchBttn">Search</button>
+    </div>
+  </div>
+            
+  <br><br>
+
+
+  <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center" id="cards"></div>
+
 
 <!-- EASIER: maybe allow users to favorite some exercises and then have a page where they can see all of their
 favorites
  -->
+<%- include("partials/footer.ejs")%>
+  

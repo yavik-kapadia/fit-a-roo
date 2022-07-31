@@ -1,0 +1,41 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">Fit<span>-A-</span>Roo</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/about">About Us</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/exerciseExplorer">Exercises</a>
+      </li>
+      <li>
+        <a class="nav-link" href="/contact"> Contact Us</a>
+      </li>       
+    </ul>
+    <%if (!locals.session.loggedin) { %>
+        <form  action="/login" class="form-inlind my-2 my-lg-0 ">
+          <button class="btn btn-danger my-2 my-sm-0" type="submit">Login</button>
+        </form>
+        <form  action="/signup" class="form-inlind my-2 my-lg-0 ">
+          <button class="btn btn-danger my-2 my-sm-0" type="submit">Sign Up</button>
+        </form>
+    <% }else{ %>
+
+      <form action="/logout">
+        <button class="btn btn-danger my-2 my-sm-0" type="submit">Log Out</button>
+      </form>
+
+    <%}%>     
+
+    
+  </div>
+</nav>

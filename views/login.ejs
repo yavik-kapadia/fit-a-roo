@@ -1,1 +1,23 @@
 <!--- Login page --->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include("partials/header.ejs")%>
+  <title>Login</title>
+</head>
+<body>
+  <p>Login</p>
+  <form method="POST">
+    username: <input type="text" name="username"> <br>
+    password: <input type="password" name="password"> <br>
+    
+    <button>Login</button>
+  </form>
+  <% if (typeof loginError != "undefined" && loginError) { %>
+      <p class="error">Wrong Credentials!</hp>
+  <% } %>
+</body>
+<footer>
+  <%- include("partials/footer.ejs")%>
+</footer>
+</html>

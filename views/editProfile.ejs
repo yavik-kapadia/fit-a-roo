@@ -1,0 +1,54 @@
+<!--- display user profile, allow for user to update personal info --->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Profile</title>
+  <%- include("partials/header.ejs")%>
+</head>
+<body>
+  <% if (typeof message != "undefined"){ %>
+    <h2><%=message%></h2>
+  <% } %>
+  <h1>Edit Profile</h1>
+  <form method="POST" action="/profile/edit">
+
+    <input type="hidden" name="userId" value="<%=userInfo[0].userId%>">
+
+    <h2>First Name:</h2>
+    <input type="text" class="form-control" name="fName" value="<%=userInfo[0].firstName%>">
+    <br>
+
+    <h2>Last Name:</h2>
+    <input type="text" class="form-control" name="lName" value="<%=userInfo[0].LastName%>">
+    <br>
+    
+    <h2>Date of Birth:</h2>
+    <input type="date" class="form-control" name="dob"  value="<%=userInfo[0].dobISO%>">
+    <br>
+
+    <h2>Email:</h2>
+    <input type="email" class="form-control" name="email" value="<%=userInfo[0].email%>">
+    <br>
+
+    <h2>Password:</h2>
+    <input type="text" class="form-control" name="password" value="<%=userInfo[0].password%>">
+    <br>
+
+    <h2>Goals:</h2>
+    <input type="text" class="form-control" name="goals" value="<%=userInfo[0].goals%>">
+    <br>
+
+ 
+    <button class="btn btn-dark">Update Profile</button>
+  </form>
+        
+  </div>
+  <br><br><br>
+
+</body>
+<footer>
+  <%- include("partials/footer.ejs")%>
+</footer>
+</html>
