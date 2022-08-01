@@ -10,7 +10,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(session ({
   secret: "top secret!",
   resave: true,
-  saveUnitialized: true
+  saveUninitialized:true
 }));
 var time = require('express-timestamp');
 app.use(time.init);
@@ -85,7 +85,7 @@ app.post("/user/new", async (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   let goals = req.body.goals;
-  let sql = `INSERT INTO profile (firstName, lastName, dob, email, password, goals) VALUES (?, ?, ?, ?, ?, ?);`
+  let sql = `INSERT INTO profile (firstName, lastName, dob, email, password, goals) VALUES (?, ?, ?, ?, ?, ?);`;
   let params = [fName, lName, birthDate, email, password, goals];
   let rows = await executeSQL(sql, params);
   res.redirect("/login");

@@ -16,6 +16,7 @@
     "express": "^4.18.1",
     "express-session": "^1.17.3",
     "express-timestamp": "^0.1.4",
+    "freezeframe": "^5.0.2",
     "lib": "^4.3.3",
     "mysql": "^2.18.1"
   }

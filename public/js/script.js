@@ -28,18 +28,21 @@ async function getWorkoutInfo(){
   let workouts = await response.json();
 
   let exercise = document.querySelector("#cards");
+  let searchMsg = document.querySelector("#searchMsg"); 
+  
   exercise.innerHTML="";
+  searchMsg.innerHTML="";
   
   if(workouts.length == 0){
-    exercise.innerHTML='<h5 class="text-center"><b>Not Found...</b></h5>';
+    searchMsg.innerHTML='<h5 class="text-center"><b>NOT FOUND...</b></h5>';
   }
   else{
-    exercise.innerHTML="";
+    searchMsg.innerHTML=`<h5 class="text-center"><b>DISPLAYING "${value}" EXERCISES </b></h5>`;
   
     for(workout of workouts){
       exercise.innerHTML +=`<div class="col">
       <div>
-        <img src="${workout.gifUrl}" class="card-img-top" alt="${workout.name}">
+        <img src="${workout.gifUrl}" class="gif card-img-top" alt="${workout.name}">
         <div class="card-body">
           <h5 class="card-title"><b>Workout</b>: ${workout.name}</h5>
           <p class="card-text"><b>Body Part</b>: ${workout.bodyPart}</p>
