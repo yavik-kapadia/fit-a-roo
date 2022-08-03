@@ -30,14 +30,25 @@ app.get("/dbTest", async function(req, res) {
 
 //default route
 app.get("/", async (req, res) => {
-  let sql = `SELECT id, name FROM exercises;`;
+  let sql = `SELECT * FROM profile;`;
   let rows = await executeSQL(sql);
-  res.render("index", { exercises: rows });
+  req.session.profile = rows[0];
+  res.render("index", { exercises: rows, "profile":req.session.profile.userId});
+});
+
+app.get("/home", async (req, res) => {
+  let sql = `SELECT * FROM profile WHERE userId = ${req.session.profile.userId};`;
+  let rows = await executeSQL(sql);
+  req.session.profile = rows[0];
+  res.render("index", { exercises: rows, "profile":req.session.profile.userId});
 });
 
 // about us
 app.get("/about", async (req, res) => {
-  res.render("about");
+  let sql = `SELECT * FROM profile WHERE userId = ${req.session.profile.userId};`;
+  let rows = await executeSQL(sql);
+  req.session.profile = rows[0];
+  res.render("about", {"profile":req.session.profile.userId});
 });
 
 // exerciseExplorer
@@ -50,8 +61,11 @@ app.get("/exerciseExplorer", async (req, res) => {
   let sqlParts = `SELECT DISTINCT bodyPart
              FROM exercises;`;
   let rowsParts = await executeSQL(sqlParts);
+  let sql = `SELECT * FROM profile WHERE userId = ${req.session.profile.userId};`;
+  let rows = await executeSQL(sql);
+  req.session.profile = rows[0];
 
-  res.render("exerciseExplorer", {"targets": rowsTarget, "parts":rowsParts});
+  res.render("exerciseExplorer", {"targets": rowsTarget, "parts":rowsParts, "profile":req.session.profile.userId});
 });
 
 app.get('/api/workout/:id', async (req, res) => {
@@ -66,7 +80,10 @@ app.get('/api/workout/:id', async (req, res) => {
 
 // contact us
 app.get("/contact", async (req, res) => {
-  res.render("contact");
+  let sql = `SELECT * FROM profile WHERE userId = ${req.session.profile.userId};`;
+  let rows = await executeSQL(sql);
+  req.session.profile = rows[0];
+  res.render("contact", {"profile":req.session.profile.userId});
 });
 
 // sign up
@@ -107,8 +124,9 @@ app.post("/login", async (req, res) => {
     req.session.authenticated = true;
     req.session.loggedin = true;
     req.session.profile = rows[0]
-    console.log(req.timestamp);
-    res.render("landingPage", {"userId":rows});
+    // console.log(req.timestamp);
+    res.render("landingPage", {"userId":rows, "profile":req.session.profile.userId});
+    
   }
   else {
     res.render("login", {"loginError": true});
@@ -116,19 +134,22 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/profile", isAuthenticated, async (req,res) => {
-  sql = `SELECT *, DATE_FORMAT(dob, '%Y-%m-%d') dobISO
-           FROM profile
-          WHERE userId = ${req.query.userId}`;
-  rows = await executeSQL(sql);
-  res.render("landingPage", {"userInfo":rows, "userId":rows});
+  
+  let sql = `SELECT *, DATE_FORMAT(dob, '%Y-%m-%d') dobISO
+               FROM profile
+              WHERE userId = ${req.session.profile.userId}`;
+  
+  let rows = await executeSQL(sql);
+  req.session.profile = rows[0]
+  res.render("landingPage", {"userInfo":rows, "userId":rows, "profile":req.session.profile.userId});
 });
 
 app.get("/profile/edit", isAuthenticated, async (req, res) => {
    let sql = `SELECT *, DATE_FORMAT(dob, '%Y-%m-%d') dobISO
               FROM profile
-              WHERE userId = ${req.query.userId}`;
+              WHERE userId = ${req.session.profile.userId}`;
    let rows = await executeSQL(sql);
-   res.render("editProfile", {"userInfo":rows});
+   res.render("editProfile", {"userInfo":rows, "profile":req.session.profile.userId});
 });
 
 app.post("/profile/edit", isAuthenticated, async (req, res) =>
@@ -154,26 +175,30 @@ app.post("/profile/edit", isAuthenticated, async (req, res) =>
     sql = `SELECT *, 
             DATE_FORMAT(dob, '%Y-%m-%d') dobISO
             FROM profile
-            WHERE userId= ${req.body.userId}`;
+            WHERE userId= ${req.session.profile.userId}`;
      rows = await executeSQL(sql);
-     res.render("editProfile", {"userInfo":rows, "message": "Profile Updated!"});
+     res.render("editProfile", {"userInfo":rows, "message": "Profile Updated!", "profile":req.session.profile.userId});
   })
 
 app.get("/profile/delete", isAuthenticated, async function(req, res){
   let sql = `DELETE
                FROM profile
-              WHERE userId = ${req.query.userId}`;
+              WHERE userId = ${req.session.profile.userId}`;
   let rows = await executeSQL(sql);
-  res.redirect('/');
+  res.redirect('/', {"profile":req.session.profile});
 });
 
 app.get("/workingout", isAuthenticated, async (req,res) =>{
+  let target =  await getTargetParts();
   sql = `SELECT *, 
             DATE_FORMAT(dob, '%Y-%m-%d') dobISO
             FROM profile
-            WHERE userId = ${req.query.userId}`;
+            WHERE userId = ${req.session.profile.userId}`;
   rows = await executeSQL(sql);
-  res.render("workingout", {"userInfo":rows});
+  res.render("workingout", {"userInfo":rows,
+                            "profile":req.session.profile.userId,
+                           focus: target
+                           });
 });
 
 // logout
@@ -181,6 +206,14 @@ app.get("/logout", isAuthenticated, (req, res) => {
   req.session.destroy();
   res.redirect("/");
 });
+
+async function getTargetParts(){
+  let sqlTarget = `SELECT DISTINCT target
+             FROM exercises;`;
+  let rowsTarget = await executeSQL(sqlTarget);
+
+  return rowsTarget
+  }
 
 //functions
 async function executeSQL(sql, params) {

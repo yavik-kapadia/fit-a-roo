@@ -13,6 +13,7 @@ let searchButton = document.querySelector("#button-addon2");
 if(searchButton !== null){
   searchButton.addEventListener("click", getWorkoutInfo);
 }
+
 async function getWorkoutInfo(){
 
   let value = this.id;
@@ -55,9 +56,9 @@ async function getWorkoutInfo(){
   }
 }
 
-var hours =0;
-var mins =0;
-var seconds =0;
+var hours = 0;
+var mins = 0;
+var seconds = 0;
 
 $('#start').click(function(){
       startTimer();

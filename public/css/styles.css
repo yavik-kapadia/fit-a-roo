@@ -5,6 +5,7 @@ body{
   margin: 0;
   font-family: 'Josefin Sans', sans-serif;
   box-sizing: border-box;
+  background-color: #c7c2c2;
 }
 .hero{
   height: 100vh;
@@ -76,3 +77,18 @@ h3{
   color: #c02121;
 }
 
+.loginBod{
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  align-items: center;
+}
+
+.workout-container{
+  background-color: white;
+  border-radius: 20px;
+  width: 75vw;
+  height: 100vh;
+  margin: 0 auto;
+  
+}
