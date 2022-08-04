@@ -96,4 +96,3 @@ function startTimer(){
       startTimer();
   },1000);
 }
-
