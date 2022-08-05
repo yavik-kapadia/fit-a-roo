@@ -5,12 +5,11 @@
   <p class="h2"> Welcome, <%= userId[0].firstName %> </p>
 <div>
   <h2>Previous Workout Stats:</h2>
-    <p>Last login: </p>
     <p>Last workout: </p>
     <p>Last duration: </p>
 </div>
 <div>
-  <a class = "btn btn-primary" href="/workingout?userId=<%=userId[0].userId%>">Start New Workout</a> <br><br><br>
+  <a class = "btn btn-primary" href="/workout?userId=<%=userId[0].userId%>">Start New Workout</a> <br><br><br>
   
   <a class = "btn btn-primary" href="/profile/edit?userId=<%=userId[0].userId%>">Update Profile</a> <br>
   

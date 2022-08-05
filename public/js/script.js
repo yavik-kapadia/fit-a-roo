@@ -19,7 +19,7 @@ async function getWorkoutInfo(){
   let value = this.id;
   let keyword = document.querySelector("#keyword").value;
   
-  if(keyword != "" && this.id === "button-addon2"){
+  if(keyword !== "" && this.id === "button-addon2"){
     value = keyword;
     console.log(value);
   }

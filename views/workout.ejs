@@ -23,7 +23,7 @@
     </div>
     <div class="exercise-adder d-flex flex-column justify-content-center">
         <div class="exercise-selector m-auto">
-            <form action="/workingout" method="get">
+            <form action="/workout" method="get">
                 <label for="target"></label>
                 <label for="">Area to target</label><br>
                 <select class="form-control" name="target">
@@ -37,11 +37,11 @@
             <% if(typeof exercises != "undefined"){ %>
                     <label for="exercises">Select Exercise</label><br>
                     <% if(exercises.length > 0){ %>
-                <form action="/api/workout/add-to-routine" method="post"></form>
+                <form action="/workout/add" method="post">
                         <select class="form-control" name="exercises">
                             <option name="exercises">Select an exercise</option>
                             <% for(var i = 0; i < exercises.length; i++){ %>
-                                <option name="exercises" id="<%= exercises[i].id %>">
+                                <option name="exercises" value="<%=exercises[i].id %>">
                                     <%= exercises[i].name %>
                                 </option>
                             <% } %>
@@ -50,9 +50,20 @@
                     <% } else { %>
                         <p>No exercises found</p>
                     <% } %>
-
+                </form>
             <% } %>
             <div class="workout-cards">
+                <%if(typeof routineLog !== "undefined" || routineLog.length > 0)%>
+                    <% for(var i = 0; i < routineLog.length; i++){ %>
+                        <div class="card m-2">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= routineLog[i].exercise %></h5>
+                                <p class="card-text"><%= routineLog[i].description %></p>
+                                <button class="btn btn-sm btn-primary">Add to Routine</button>
+                            </div>
+                        </div>
+                    <% } %>
+                <%}%>
             </div>
         </div>
     </div>
