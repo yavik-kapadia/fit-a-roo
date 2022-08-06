@@ -12,7 +12,8 @@ app.use(express.urlencoded({extended: true}));
 app.use(session({
     secret: "top secret!",
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+
 }));
 var time = require('express-timestamp');
 app.use(time.init);
@@ -20,6 +21,7 @@ app.use(function (req, res, next) {
     res.locals.session = req.session;
     next();
 });
+
 
 //routes
 
@@ -208,51 +210,76 @@ app.get("/profile/delete", isAuthenticated, async function (req, res) {
 app.get("/workout", isAuthenticated, async (req, res) => {
     console.log("Workout start: " + req.session.workoutstarted);
     if(req.session.workoutstarted === false) {
+
         req.session.workoutstarted = true;
+
         req.session.profile.currentExercises = [];
+
         req.session.profile.sessionId = await initWorkout(req.session.profile.userId);
+
         console.log("Session ID: " + req.session.profile.sessionId);
     }
     let target = await getTargetParts();
-    sql = `SELECT *,
-                  DATE_FORMAT(dob, '%Y-%m-%d') dobISO
-           FROM profile
-           WHERE userId = ${req.session.profile.userId}`;
-    rows = await executeSQL(sql);
+
+    let sql = `SELECT *,
+                      DATE_FORMAT(dob, '%Y-%m-%d') dobISO
+               FROM profile
+               WHERE userId = ${req.session.profile.userId}`;
+
+    let rows = await executeSQL(sql);
 
     let selected = await getExercises(req.query.target);
     console.log("Items found: "+selected.length);
+
     if(selected.length === 0) {
         res.render("workout", {
             sessionId: req.session.profile.sessionId,
             "userInfo": rows,
             "profile": req.session.profile.userId,
-            focus: target,
+            target: target,
             routineLog: req.session.profile.currentExercises,
         });
     } else {
         res.render("workout", {
             "userInfo": rows,
             "profile": req.session.profile.userId,
+            target: target,
             exercises: selected,
-            focus: target,
             routineLog: req.session.profile.currentExercises
         });
     }
 
 });
 app.post("/workout/add", isAuthenticated, async (req, res) => {
-    console.log(req.body.exercises);
+    console.log(req.body);
     let setId = await addToRoutine(req.session.profile.sessionId, req.session.profile.userId, req.body.exercises);
-    let exercise = {
-        "exercise": req.body.exercises,
-        "setId": setId
-    }
+    let exercise = await getExerciseById(req.body.exercises);
+    exercise = exercise[0];
+    exercise.setId = setId;
+
     req.session.profile.currentExercises.push(exercise);
     res.redirect("/workout");
 
 });
+app.post("/workout/delete", isAuthenticated, async (req, res) => {
+    console.log("Checking: "+req.body);
+    let setId = await deleteFromRoutine(req.session.profile.sessionId, req.session.profile.userId, req.body.id);
+    currentExercises = req.session.profile.currentExercises.filter(item => item.id !== req.body.id);
+    res.redirect("/workout");
 
+
+});
+//delete from routine
+async function deleteFromRoutine(sessionId, userId, exerciseId) {
+    let sql = `DELETE
+               FROM routine
+               WHERE sessionId = ${sessionId}
+               AND userId = ${userId}
+               AND exerciseId = ${exerciseId}`;
+    let rows = await executeSQL(sql);
+
+    return rows;
+}
 // logout
 app.get("/logout", isAuthenticated, (req, res) => {
     req.session.destroy();
@@ -265,10 +292,11 @@ async function getTargetParts() {
     return await executeSQL(sqlTarget)
 }
 
-async function getBodyParts() {
-    let sqlBody = `SELECT DISTINCT bodyPart
-                   FROM exercises;`;
-    return await executeSQL(sqlBody);
+async function getExerciseById(id) {
+    let sql = `SELECT *
+               FROM exercises
+               WHERE id = ${id}`;
+    return await executeSQL(sql);
 }
 
 async function getExercises(target) {
@@ -276,28 +304,8 @@ async function getExercises(target) {
     let params = [target];
     return await executeSQL(sqlExercise, params);
 }
-async function initExerciseListByTarget(){
-    let targets = await getTargetParts();
-    let allExercises = [];
 
-    for(let i = 0; i < targets.length; i++) {
-        let target = targets[i].target;
-        let selected = await getExercises(target);
-        let temp= [];
-        for(let j = 0; j < selected.length; j++) {
-            temp.push({
-                "name": selected[j].name,
-                "bodyPart": selected[j].bodyPart,
-                "target": selected[j].target,
-                "id": selected[j].id,
-                "equipment": selected[j].equipment
-            });
-        }
-        let tempList = {"target": target, "exercises": temp};
-        allExercises.push(tempList);
-    }
-    return allExercises;
-}
+
 async function initWorkout (id){
     let sql = `INSERT INTO workout(userId, status) values (?, ?);`;
     let params = [id, true];
@@ -305,12 +313,14 @@ async function initWorkout (id){
     console.log(rows.insertId);
     return rows.insertId;
 }
+
 async function resumeWorkOut(userId) {
     let sql = `SELECT * FROM workout WHERE userId = ? and status = ? order by MAX(startTime)`;
     let params = [userId, true];
     let rows = await executeSQL(sql, params);
     return rows[0].sessionId;
 }
+
 async function addToRoutine(sessionId, userId, exerciseId, reps, sets) {
     let sql = `INSERT INTO routine(sessionId, userId, exerciseId) values (?, ?, ?);`;
     let params = [sessionId, userId, exerciseId];
@@ -337,7 +347,11 @@ function isAuthenticated(req, res, next) {
     }
 }
 
-
+//store allExercises in session
+async function initExerciseList(req, res, next) {
+    req.session.allExercises = await initExerciseListByTarget();
+    next();
+}
 //start server
 app.listen(3000, () => {
     console.log("Express server running...")

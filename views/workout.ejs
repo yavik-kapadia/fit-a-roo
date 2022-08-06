@@ -22,14 +22,15 @@
         </div>
     </div>
     <div class="exercise-adder d-flex flex-column justify-content-center">
+        <h2>Add exercises to routine:</h2>
         <div class="exercise-selector m-auto">
             <form action="/workout" method="get">
                 <label for="target"></label>
                 <label for="">Area to target</label><br>
                 <select class="form-control" name="target">
                     <option name="target">Select an area to focus</option>
-                    <% for(var i = 0; i < focus.length; i++){ %>
-                        <option name="target" id="<%= focus[i].target %>"><%= focus[i].target %></option>
+                    <% for(var i = 0; i < target.length; i++){ %>
+                        <option name="target" value="<%= target[i].target %>"><%= target[i].target%></option>
                     <% } %>
                 </select>
                 <button class="btn btn-sm btn-primary">Search</button>
@@ -41,8 +42,8 @@
                         <select class="form-control" name="exercises">
                             <option name="exercises">Select an exercise</option>
                             <% for(var i = 0; i < exercises.length; i++){ %>
-                                <option name="exercises" value="<%=exercises[i].id %>">
-                                    <%= exercises[i].name %>
+                                <option name="exercises" id="<%=exercises[i].name%>" value="<%=exercises[i].id %>">
+                                    <%= exercises[i].name%>
                                 </option>
                             <% } %>
                         </select>
@@ -53,13 +54,29 @@
                 </form>
             <% } %>
             <div class="workout-cards">
-                <%if(typeof routineLog !== "undefined" || routineLog.length > 0)%>
+
+                <%if(typeof routineLog !== "undefined" || routineLog.length > 0){%>
                     <% for(var i = 0; i < routineLog.length; i++){ %>
                         <div class="card m-2">
                             <div class="card-body">
-                                <h5 class="card-title"><%= routineLog[i].exercise %></h5>
-                                <p class="card-text"><%= routineLog[i].description %></p>
-                                <button class="btn btn-sm btn-primary">Add to Routine</button>
+                                <h5 class="card-title"><%= routineLog[i].name %></h5>
+                                <%console.log(routineLog)%>
+                                <p class="card-text"><%= routineLog[i].target %></p>
+                                <div class="set">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" placeholder="Weight"
+                                               aria-label="Weight">
+                                        <span class="input-group-text">-</span>
+                                        <input type="text" class="form-control" placeholder="Reps" aria-label="Reps">
+                                        <button class="btn btn-primary" aria-label="add-set"><i class="bi
+                                        bi-plus"></i></button>
+                                    </div>
+                                </div>
+                                <form action="/workout/delete" method="post">
+                                    <input type="hidden" name="id" value="<%= routineLog[i].id %>">
+                                    <button class="btn btn-sm btn-danger">delete</button>
+                                </form>
+
                             </div>
                         </div>
                     <% } %>
