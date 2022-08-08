@@ -72,8 +72,8 @@ app.get('/api/workout/:id', async (req, res) => {
   let id = req.params.id;
   let sql = `SELECT *
             FROM exercises
-            WHERE target LIKE ? OR bodyPart LIKE ? OR name LIKE ?;`;    
-  let params = [`%${id}%`, `%${id}%`, `%${id}%`];
+            WHERE target LIKE ? OR bodyPart LIKE ? OR name LIKE ? OR id = ?;`;    
+  let params = [`%${id}%`, `%${id}%`, `%${id}%`, id];
   let rows = await executeSQL(sql, params);
   res.send(rows)
 });
@@ -93,7 +93,7 @@ app.get("/signup", async (req, res) => {
 
 app.get("/user/new", (req, res) => {
   res.render("login");
-})
+});
 
 app.post("/user/new", async (req, res) => {
   let fName = req.body.fName;
@@ -101,9 +101,10 @@ app.post("/user/new", async (req, res) => {
   let birthDate = req.body.birthDate;
   let email = req.body.email;
   let password = req.body.password;
+  const hash = await bcrypt.hash(password, 10);
   let goals = req.body.goals;
   let sql = `INSERT INTO profile (firstName, lastName, dob, email, password, goals) VALUES (?, ?, ?, ?, ?, ?);`;
-  let params = [fName, lName, birthDate, email, password, goals];
+  let params = [fName, lName, birthDate, email, hash, goals];
   let rows = await executeSQL(sql, params);
   res.redirect("/login");
 });
@@ -113,20 +114,20 @@ app.get("/login", async (req,res) => {
   res.render("login");
 });
 
-// removed hashed password, can come back to it if we want to implement at the signup form
 app.post("/login", async (req, res) => {
   let username = req.body.username;
   let password = req.body.password;
   let sql = `SELECT * FROM profile WHERE email = ?`;
   let rows = await executeSQL(sql, [username]);
-  let passwordMatch = (password === rows[0].password);
-  if (passwordMatch) { 
+  if (comparePassword(password, rows[0].password)) { 
     req.session.authenticated = true;
     req.session.loggedin = true;
     req.session.profile = rows[0]
-    // console.log(req.timestamp);
+    var datetime = new Date().toISOString().slice(0,10);
+    let datetimeSQL = `UPDATE profile SET lastLogin = ? WHERE userId = ${req.session.profile.userId};`;
+    let datetimeParams = [datetime];
+    let datetimeRows = await executeSQL(datetimeSQL, datetimeParams);
     res.render("landingPage", {"userId":rows, "profile":req.session.profile.userId});
-    
   }
   else {
     res.render("login", {"loginError": true});
@@ -134,11 +135,9 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/profile", isAuthenticated, async (req,res) => {
-  
   let sql = `SELECT *, DATE_FORMAT(dob, '%Y-%m-%d') dobISO
                FROM profile
               WHERE userId = ${req.session.profile.userId}`;
-  
   let rows = await executeSQL(sql);
   req.session.profile = rows[0]
   res.render("landingPage", {"userInfo":rows, "userId":rows, "profile":req.session.profile.userId});
@@ -162,7 +161,6 @@ app.post("/profile/edit", isAuthenticated, async (req, res) =>
                password = ?, 
                goals = ?
             WHERE userId =  ?`;
- 
     let params = [req.body.fName,  
                   req.body.lName, 
                   req.body.dob,  
@@ -171,13 +169,12 @@ app.post("/profile/edit", isAuthenticated, async (req, res) =>
                   req.body.goals, 
                   req.body.userId];         
     let rows = await executeSQL(sql,params);
-     
     sql = `SELECT *, 
             DATE_FORMAT(dob, '%Y-%m-%d') dobISO
             FROM profile
             WHERE userId= ${req.session.profile.userId}`;
-     rows = await executeSQL(sql);
-     res.render("editProfile", {"userInfo":rows, "message": "Profile Updated!", "profile":req.session.profile.userId});
+    rows = await executeSQL(sql);
+    res.render("editProfile", {"userInfo":rows, "message": "Profile Updated!", "profile":req.session.profile.userId});
   })
 
 app.get("/profile/delete", isAuthenticated, async function(req, res){
@@ -207,15 +204,9 @@ app.get("/logout", isAuthenticated, (req, res) => {
   res.redirect("/");
 });
 
-async function getTargetParts(){
-  let sqlTarget = `SELECT DISTINCT target
-             FROM exercises;`;
-  let rowsTarget = await executeSQL(sqlTarget);
-
-  return rowsTarget
-  }
-
 //functions
+
+// execute SQL
 async function executeSQL(sql, params) {
   return new Promise(function(resolve, reject) {
     pool.query(sql, params, function(err, rows, fields) {
@@ -225,16 +216,36 @@ async function executeSQL(sql, params) {
   });
 };
 
+// get targets
+async function getTargetParts(){
+  let sqlTarget = `SELECT DISTINCT target
+             FROM exercises;`;
+  let rowsTarget = await executeSQL(sqlTarget);
+
+  return rowsTarget
+  }
+
+// hash password
+async function hashPassword(plaintextPassword) {
+  const hash = await bcrypt.hash(plaintextPassword, 10);
+  return hash;
+}
+
+// compare password
+async function comparePassword(plaintextPassword, hash) {
+  const result = await bcrypt.compare(plaintextPassword, hash);
+  return result;
+}
+
 // check for authentication 
 function isAuthenticated(req,res,next) {
   if (!req.session.authenticated) {
-    res.redirect("/login")
+    res.redirect("/login");
   }
   else{
     next();
   }
 }
-
 
 //start server
 app.listen(3000, () => {

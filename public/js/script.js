@@ -9,6 +9,11 @@ for (bodyPartLink of bodyPartLinks){
   bodyPartLink.addEventListener("click", getWorkoutInfo);
 }
 
+var viewWorkoutLinks = document.getElementsByName("viewWorkoutInfo");
+for (viewWorkoutLink of viewWorkoutLinks){
+  viewWorkoutLink.addEventListener("click", getModalInfo);
+}
+
 let searchButton = document.querySelector("#button-addon2");
 if(searchButton !== null){
   searchButton.addEventListener("click", getWorkoutInfo);
@@ -41,19 +46,34 @@ async function getWorkoutInfo(){
     searchMsg.innerHTML=`<h5 class="text-center"><b>DISPLAYING "${value}" EXERCISES </b></h5>`;
   
     for(workout of workouts){
-      exercise.innerHTML +=`<div class="col">
-      <div>
-        <img src="${workout.gifUrl}" class="gif card-img-top" alt="${workout.name}">
-        <div class="card-body">
-          <h5 class="card-title"><b>Workout</b>: ${workout.name}</h5>
-          <p class="card-text"><b>Body Part</b>: ${workout.bodyPart}</p>
-          <p class="card-text"><b>Target</b>: ${workout.target}</p>
-          <p class="card-text"><b>Equipment</b>: ${workout.equipment}</p>
-        </div>
+      exercise.innerHTML +=`<div class="col"><br>
+      <div class="workoutCard">
+        <h5 class="card-title"><b>Workout</b>: ${workout.name}</h5>
+        <br><br>
       </div>
+      <div class="text-center" id="viewInfoDiv">
+          <button class="btn btn-warning" href="#" onclick="getModalInfo(${workout.id})">View Info</button>
+        </div>
+        <br>
     </div>`;
     }
   }
+}
+
+async function getModalInfo(id){
+  var myModal = new bootstrap.Modal(document.getElementById('workoutModal'));
+  myModal.show();
+  console.log(id);
+  let url = `/api/workout/${id}`;
+  let response = await fetch(url);
+  let data = await response.json();
+  console.log(data);
+  let workoutInfo = document.querySelector("#workoutInfo");
+  workoutInfo.innerHTML = `<h4> ${data[0].name}</h4>`;
+  workoutInfo.innerHTML += `<img src="${data[0].gifUrl}" width="200" class="center"><br>`;
+  workoutInfo.innerHTML += `<b>Body Part</b>: ${data[0].bodyPart}<br>`;
+  workoutInfo.innerHTML += `<b>Target</b>: ${data[0].target}<br>`;
+  workoutInfo.innerHTML += `<b>Equipment</b>: ${data[0].equipment}<br>`;
 }
 
 var hours = 0;
@@ -96,4 +116,5 @@ function startTimer(){
       startTimer();
   },1000);
 }
+
 
