@@ -18,6 +18,7 @@
     "express-timestamp": "^0.1.4",
     "freezeframe": "^5.0.2",
     "lib": "^4.3.3",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "node-fetch": "^3.2.10"
   }
 }

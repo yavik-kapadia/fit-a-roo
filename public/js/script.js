@@ -1,4 +1,6 @@
 //Even Listeners
+document.getElementById("#loginButton").addEventListener("click", validateLogin);
+
 var targetLinks = document.getElementsByName("target");
 for (targetLink of targetLinks){
   targetLink.addEventListener("click", getWorkoutInfo);
@@ -18,6 +20,19 @@ let searchButton = document.querySelector("#button-addon2");
 if(searchButton !== null){
   searchButton.addEventListener("click", getWorkoutInfo);
 }
+
+async function validateLogin(){
+  let username = document.getElementById("#username").value;
+  isValid = true;
+  console.log(username);
+  if (username == "") {
+    isValid = false;
+    preventDefault();
+  }
+  else{
+    isValid = true;
+    return
+  }
 
 async function getWorkoutInfo(){
 

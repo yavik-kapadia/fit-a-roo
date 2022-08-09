@@ -6,21 +6,36 @@
   <title>Login</title>
 </head>
 <body>
-  <p>Sign Up</p>
-  <form method="POST" action="/user/new">
-    <h2>First Name:</h2>
-    <input type="text" class="form-control" name="fName"><br>  
-    <h2>Last Name:</h2>
-    <h2><input type="text" class="form-control" name="lName"><br>
-    <h2>Date of Birth:</h2>
-    <input type="date" class="form-control" name="birthDate"><br>  
-    <h2>Email:</h2>
-    <input type="email" class="form-control" name="email"><br>  
-    <h2>Password:</h2>
-    <input type="password" class="form-control" name="password"><br>  
-    <h2>Goals:</h2>
-    <input type="text" class="form-control" name="goals"><br>  
-    <button>Sign Up</button>
+  <form method="POST" action="/user/new" class="row" id="signUpForm">
+    <div id="signUpHeader">
+      <br>
+      <h5>Sign Up</h5>
+      <br>
+    </div>
+    <div class="signUpCol">
+      <span style="color: black;">First Name:</span>
+      <input type="text" class="form-control" name="fName">
+      <span style="color: black;">Last Name:</span>
+      <input type="text" class="form-control" name="lName">
+    </div>
+    <br>
+    <div class="signUpCol">
+      <span style="color: black;">Date of Birth:</span>
+      <input type="date" class="form-control" name="birthDate">
+      <span style="color: black;">Email:</span>
+      <input type="email" class="form-control" name="email"> 
+    </div>
+    <br>
+    <div class="signUpCol">
+      <span style="color: black;">Password:</span>
+      <input type="password" class="form-control" name="password">
+      <span style="color: black;">Goals:</span>
+      <input type="text" class="form-control" name="goals"><br>
+    </div>
+    <div class="text-center">
+      <button id="signUpBttn" class="btn">Sign Up</button>
+      <br><br>
+    </div>
   </form>
 </body>
 <footer>

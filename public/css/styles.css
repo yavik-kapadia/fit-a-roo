@@ -66,6 +66,33 @@ h3{
   margin-left: 2rem;
 }
 
+#workoutInfo{
+  text-align:center;
+}
+
+#targetBttn, #bodyPartBttn, #signUpBttn{
+  background-color: #AF01FE;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+#signUpForm{
+ margin:auto;
+ width: 30rem;
+ text-align: left;
+ border-radius: 10px;
+ background-color: white;
+}
+#signUpHeader{
+  background-color: #01FEAF;
+  text-align: center;
+  height: 4rem;
+  color: black;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
 .values{
   color: #c02121;
 }
@@ -129,7 +156,7 @@ h3{
   min-height: 100vh;
 }
 .forBKG{
-  background-image: url(/img/hero/hero6.webp);
+  background-image:     url(/img/hero/hero6.webp);
   width: 100%;
   height: 650px;
   background-position: center;
@@ -145,4 +172,69 @@ h3{
 div.aboutInsideBottom{
   text-align: center;
 }
-
+/* contact page */
+#contactBody{
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background-image: url(/img/hero/hero1.webp);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  text-align: center;
+  
+}
+.contactInside ul{
+  list-style: none;
+}
+.contactInside{
+  width: 100%;
+  display: inline-block;
+  text-align: center;
+  margin-top: 15%;
+  margin-left: 50%;
+  transform: translate(-50%,-50%);
+}
+.contactInside li:hover{
+  background: #029bd5;
+}
+.contactInside > ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  background: #313131;
+  color: white;
+}
+.contactInside > ul > li{
+  position: relative;
+  cursor: pointer;
+  font-family: poppins;
+  font-size: 14px;
+  letter-spacing: 1px;
+  float: left;
+  width: 250px;
+  height: 50px;
+  line-height: 50px;
+}
+.dropdown{
+  top: 100%;
+  width: 100%;
+  padding: 0; 
+  left: 0;
+}
+.dropdown li{
+  background: #313131;
+  display: none;
+}
+.dropdown li:hover{
+  background: #029bd5;
+  position: absolute;
+}
+.contactInside li:hover > .dropdown li {
+  display: block;
+}
+#landingWelcome{
+  text-size: 1rem;
+}

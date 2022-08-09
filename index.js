@@ -2,8 +2,13 @@ const express = require('express');
 const app = express();
 const pool = require('./dbPool.js');
 const session = require('express-session');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
+const date = new Date();
+const pst = date.toLocaleString('en-US', {
+    timeZone: 'America/Los_Angeles',
+  });
 app.set("view engine", "ejs");
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
@@ -36,6 +41,7 @@ app.get("/", async (req, res) => {
   res.render("index", { exercises: rows, "profile":req.session.profile.userId});
 });
 
+// i'm not quite sure if this is needed? -LG
 app.get("/home", async (req, res) => {
   let sql = `SELECT * FROM profile WHERE userId = ${req.session.profile.userId};`;
   let rows = await executeSQL(sql);
@@ -114,26 +120,50 @@ app.get("/login", async (req,res) => {
   res.render("login");
 });
 
+app.get('/api/login/:username', async (req, res) => {
+  let username = req.params.username;
+  let sql = `SELECT email
+            FROM profile
+            WHERE email = ?;`;    
+  let params = [username];
+  let rows = await executeSQL(sql, params);
+  res.send(rows)
+});
+
 app.post("/login", async (req, res) => {
   let username = req.body.username;
+  let url = `https://fit-a-roo.yavik.repl.co/api/login/` + username;
+  let response = await fetch(url);
+  let data = await response.json();
+  console.log("user: " + username);
+  console.log("db: " + data[0].email);
+  let validUser = (username == data[0].email);
+  console.log("validUser: " + validUser);
   let password = req.body.password;
   let sql = `SELECT * FROM profile WHERE email = ?`;
   let rows = await executeSQL(sql, [username]);
-  if (comparePassword(password, rows[0].password)) { 
+  const result = await bcrypt.compare(password, rows[0].password);
+  if (validUser){
+    if (result) { 
     req.session.authenticated = true;
     req.session.loggedin = true;
-    req.session.profile = rows[0]
-    var datetime = new Date().toISOString().slice(0,10);
+    req.session.profile = rows[0];
+    var datetime = pst;
     let datetimeSQL = `UPDATE profile SET lastLogin = ? WHERE userId = ${req.session.profile.userId};`;
     let datetimeParams = [datetime];
     let datetimeRows = await executeSQL(datetimeSQL, datetimeParams);
     res.render("landingPage", {"userId":rows, "profile":req.session.profile.userId});
+    }
+    else {
+      res.render("login", {"loginError": true});
+    }
   }
   else {
     res.render("login", {"loginError": true});
   }
 });
 
+// profile and landing page
 app.get("/profile", isAuthenticated, async (req,res) => {
   let sql = `SELECT *, DATE_FORMAT(dob, '%Y-%m-%d') dobISO
                FROM profile
@@ -143,6 +173,7 @@ app.get("/profile", isAuthenticated, async (req,res) => {
   res.render("landingPage", {"userInfo":rows, "userId":rows, "profile":req.session.profile.userId});
 });
 
+// edit profile
 app.get("/profile/edit", isAuthenticated, async (req, res) => {
    let sql = `SELECT *, DATE_FORMAT(dob, '%Y-%m-%d') dobISO
               FROM profile
@@ -177,6 +208,7 @@ app.post("/profile/edit", isAuthenticated, async (req, res) =>
     res.render("editProfile", {"userInfo":rows, "message": "Profile Updated!", "profile":req.session.profile.userId});
   })
 
+// delete profile
 app.get("/profile/delete", isAuthenticated, async function(req, res){
   let sql = `DELETE
                FROM profile
@@ -185,6 +217,7 @@ app.get("/profile/delete", isAuthenticated, async function(req, res){
   res.redirect('/', {"profile":req.session.profile});
 });
 
+// start workout page
 app.get("/workingout", isAuthenticated, async (req,res) =>{
   let target =  await getTargetParts();
   sql = `SELECT *, 
@@ -224,18 +257,6 @@ async function getTargetParts(){
 
   return rowsTarget
   }
-
-// hash password
-async function hashPassword(plaintextPassword) {
-  const hash = await bcrypt.hash(plaintextPassword, 10);
-  return hash;
-}
-
-// compare password
-async function comparePassword(plaintextPassword, hash) {
-  const result = await bcrypt.compare(plaintextPassword, hash);
-  return result;
-}
 
 // check for authentication 
 function isAuthenticated(req,res,next) {

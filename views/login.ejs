@@ -5,16 +5,17 @@
   
     <div class ="form-group">
       <h1 id = "loginH1">Login</h1>
-  <form method="POST">
-    <label for="username">username:</label><input type="text" name="username" id="username"> <br>
-    <label for="password">password:</label> <input type="password" id="password" name="password"> <br>
-  
-    <button>Login</button>
-  </form>
-    </div>
+      <form method="POST">
+        <label for="username">username:</label><input type="text" name="username" id="username"> <br>
+        <label for="password">password:</label> <input type="password" id="password" name="password"> <br>
+        <button id="loginButton">Login</button>
+      </form>
+      
+    </div>  
   <% if (typeof loginError != "undefined" && loginError) { %>
       <p class="error">Wrong Credentials!</p>
   <% } %>
   </div>
+    
 </div>
   <%- include("partials/footer.ejs")%>

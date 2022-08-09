@@ -5,7 +5,7 @@ different exercises in the db -->
 <br><br>
   <div class="d-flex justify-content-center">
     <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="targetBttn">
         Target
       </button>
       <ul class="dropdown-menu">
@@ -15,7 +15,7 @@ different exercises in the db -->
       </ul>
     </div>
     <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="bodyPartBttn">
         Body Part
       </button>
       <ul class="dropdown-menu">
@@ -26,7 +26,7 @@ different exercises in the db -->
     </div> 
     <div class="input-group mb-3 w-25" id="searchExercise">
       <input type="text" class="form-control" placeholder="search" aria-label="search" aria-describedby="button-addon2" id="keyword">
-      <button class="btn btn-outline-secondary" type="button" id="button-addon2" name="searchBttn">Search</button>
+      <button class="btn" type="button" id="button-addon2" name="searchBttn" style="background-color: #AF01FE; color: white; border: none;">Search</button>
     </div>
   </div>
             
@@ -38,15 +38,15 @@ different exercises in the db -->
   <div id="workoutModal" class="modal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header" style="border:none; background-color: #01FEAF;">
           <h5 class="modal-title">Work Information</h5>
           <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div id="workoutInfo"></div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <div class="modal-footer" style="border:none;">
+          <button type="button" class="btn" data-dismiss="modal" style="background-color: #AF01FE; border:none; color:white;">Close</button>
         </div>
       </div>
     </div>
