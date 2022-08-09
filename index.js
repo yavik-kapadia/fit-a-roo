@@ -217,19 +217,79 @@ app.get("/profile/delete", isAuthenticated, async function(req, res){
   res.redirect('/', {"profile":req.session.profile});
 });
 
-// start workout page
-app.get("/workingout", isAuthenticated, async (req,res) =>{
-  let target =  await getTargetParts();
-  sql = `SELECT *, 
-            DATE_FORMAT(dob, '%Y-%m-%d') dobISO
-            FROM profile
-            WHERE userId = ${req.session.profile.userId}`;
-  rows = await executeSQL(sql);
-  res.render("workingout", {"userInfo":rows,
-                            "profile":req.session.profile.userId,
-                           focus: target
-                           });
+app.get("/workout", isAuthenticated, async (req, res) => {
+    console.log("Workout start: " + req.session.workoutstarted);
+    if(req.session.workoutstarted === false) {
+
+        req.session.workoutstarted = true;
+
+        req.session.profile.currentExercises = [];
+
+        req.session.profile.sessionId = await initWorkout(req.session.profile.userId);
+
+        console.log("Session ID: " + req.session.profile.sessionId);
+    }
+    let target = await getTargetParts();
+
+    let sql = `SELECT *,
+                      DATE_FORMAT(dob, '%Y-%m-%d') dobISO
+               FROM profile
+               WHERE userId = ${req.session.profile.userId}`;
+
+    let rows = await executeSQL(sql);
+
+    let selected = await getExercises(req.query.target);
+    console.log("Items found: "+selected.length);
+
+    if(selected.length === 0) {
+        res.render("workout", {
+            sessionId: req.session.profile.sessionId,
+            "userInfo": rows,
+            "profile": req.session.profile.userId,
+            target: target,
+            routineLog: req.session.profile.currentExercises,
+        });
+    } else {
+        res.render("workout", {
+            "userInfo": rows,
+            "profile": req.session.profile.userId,
+            target: target,
+            exercises: selected,
+            routineLog: req.session.profile.currentExercises
+        });
+    }
+
 });
+app.post("/workout/add", isAuthenticated, async (req, res) => {
+    console.log(req.body);
+    let setId = await addToRoutine(req.session.profile.sessionId, req.session.profile.userId, req.body.exercises);
+    let exercise = await getExerciseById(req.body.exercises);
+    exercise = exercise[0];
+    exercise.setId = setId;
+
+    req.session.profile.currentExercises.push(exercise);
+    res.redirect("/workout");
+
+});
+app.post("/workout/delete", isAuthenticated, async (req, res) => {
+    console.log("Checking: "+req.body);
+    let setId = await deleteFromRoutine(req.session.profile.sessionId, req.session.profile.userId, req.body.id);
+    currentExercises = req.session.profile.currentExercises.filter(item => item.id !== req.body.id);
+    res.redirect("/workout");
+
+
+});
+//delete from routine
+async function deleteFromRoutine(sessionId, userId, exerciseId) {
+    let sql = `DELETE
+               FROM routine
+               WHERE sessionId = ${sessionId}
+               AND userId = ${userId}
+               AND exerciseId = ${exerciseId}`;
+    let rows = await executeSQL(sql);
+
+    return rows;
+}
 
 // logout
 app.get("/logout", isAuthenticated, (req, res) => {
@@ -249,14 +309,51 @@ async function executeSQL(sql, params) {
   });
 };
 
-// get targets
-async function getTargetParts(){
-  let sqlTarget = `SELECT DISTINCT target
-             FROM exercises;`;
-  let rowsTarget = await executeSQL(sqlTarget);
 
-  return rowsTarget
-  }
+async function getTargetParts() {
+    let sqlTarget = `SELECT DISTINCT target
+                     FROM exercises;`;
+    return await executeSQL(sqlTarget)
+}
+
+async function getExerciseById(id) {
+    let sql = `SELECT *
+               FROM exercises
+               WHERE id = ${id}`;
+    return await executeSQL(sql);
+}
+
+async function getExercises(target) {
+    let sqlExercise = `SELECT * FROM exercises WHERE target LIKE ?;`;
+    let params = [target];
+    return await executeSQL(sqlExercise, params);
+}
+
+
+async function initWorkout (id){
+    let sql = `INSERT INTO workout(userId, status) values (?, ?);`;
+    let params = [id, true];
+    let rows = await executeSQL(sql, params);
+    console.log(rows.insertId);
+    return rows.insertId;
+}
+
+async function resumeWorkOut(userId) {
+    let sql = `SELECT * FROM workout WHERE userId = ? and status = ? order by MAX(startTime)`;
+    let params = [userId, true];
+    let rows = await executeSQL(sql, params);
+    return rows[0].sessionId;
+}
+
+async function addToRoutine(sessionId, userId, exerciseId, reps, sets) {
+    let sql = `INSERT INTO routine(sessionId, userId, exerciseId) values (?, ?, ?);`;
+    let params = [sessionId, userId, exerciseId];
+    let rows = await executeSQL(sql, params);
+    console.log("id: "+rows.insertId);
+    return rows.insertId;
+}
+//functions
+
 
 // check for authentication 
 function isAuthenticated(req,res,next) {
