@@ -163,8 +163,8 @@ p{
 .workout-container{
   background-color: white;
   border-radius: 20px;
-  width: 75vw;
-  height: 100vh;
+  min-width: 75vw;
+  min-height: 100vh;
   margin: 0 auto;
   
 }

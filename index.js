@@ -26,13 +26,6 @@ app.use(function (req, res, next) {
 
 //routes
 
-//db test
-app.get("/dbTest", async function (req, res) {
-    let sql = "SELECT * FROM exercises";
-    let rows = await executeSQL(sql);
-    res.send(rows);
-});
-
 //default route
 app.get("/", async (req, res) => {
     let sql = `SELECT *
@@ -42,15 +35,6 @@ app.get("/", async (req, res) => {
     res.render("index", {exercises: rows, "profile": req.session.profile.userId});
 });
 
-// i'm not quite sure if this is needed? -LG
-app.get("/home", async (req, res) => {
-    let sql = `SELECT *
-               FROM profile
-               WHERE userId = ${req.session.profile.userId};`;
-    let rows = await executeSQL(sql);
-    req.session.profile = rows[0];
-    res.render("index", {exercises: rows, "profile": req.session.profile.userId});
-});
 
 // about us
 app.get("/about", async (req, res) => {
@@ -80,18 +64,6 @@ app.get("/exerciseExplorer", async (req, res) => {
     res.render("exerciseExplorer", {"targets": rowsTarget, "parts": rowsParts, "profile": req.session.profile.userId});
 });
 
-app.get('/api/workout/:id', async (req, res) => {
-    let id = req.params.id;
-    let sql = `SELECT *
-               FROM exercises
-               WHERE target LIKE ?
-                  OR bodyPart LIKE ?
-                  OR name LIKE ?
-                  OR id = ?;`;
-    let params = [`%${id}%`, `%${id}%`, `%${id}%`, id];
-    let rows = await executeSQL(sql, params);
-    res.send(rows)
-});
 
 // contact us
 app.get("/contact", async (req, res) => {
@@ -103,15 +75,16 @@ app.get("/contact", async (req, res) => {
     res.render("contact", {"profile": req.session.profile.userId});
 });
 
-// sign up
+// Sign up
 app.get("/signup", async (req, res) => {
     res.render("signUp");
 });
-
+// Login
 app.get("/user/new", (req, res) => {
     res.render("login");
 });
 
+//Sign up post
 app.post("/user/new", async (req, res) => {
     let fName = req.body.fName;
     let lName = req.body.lName;
@@ -127,12 +100,13 @@ app.post("/user/new", async (req, res) => {
     res.redirect("/login");
 });
 
-// login 
+// get login
 app.get("/login", async (req, res) => {
-    res.render("login");
-});
+        res.render("login");
+    }
+);
 
-
+// Post login
 app.post("/login", async (req, res) => {
     let password = req.body.password;
     let username = req.body.username;
@@ -206,6 +180,7 @@ app.get("/profile/edit", isAuthenticated, async (req, res) => {
     res.render("editProfile", {"userInfo": rows, "profile": req.session.profile.userId});
 });
 
+// edit profile post
 app.post("/profile/edit", isAuthenticated, async (req, res) => {
     let sql = `UPDATE profile
                SET firstName = ?,
@@ -239,47 +214,38 @@ app.get("/profile/delete", isAuthenticated, async function (req, res) {
     res.redirect('/', {"profile": req.session.profile});
 });
 
+//get workout page
 app.get("/workout", isAuthenticated, async (req, res) => {
     console.log("userId: " + req.session.profile.userId)
     console.log("Check 1 - Workout start: " + req.session.workoutstarted);
 
+
+    let userInfo = await getProfile(req.session.profile.userId); //get user info
     if (req.session.workoutstarted === false || typeof req.session.workoutstarted === "undefined") {
-        console.log("userId: " + req.session.profile.userId);
-        req.session.workoutstarted = true;
-        console.log("Check 2 - Workout start: " + req.session.workoutstarted);
-        req.session.profile.currentExercises = [];
+        req.session.workoutstarted = true; //set workout started to true
 
-        req.session.profile.sessionId = await initWorkout(req.session.profile.userId);
-
+        req.session.profile.sessionId = await initWorkout(req.session.profile.userId); //init workout
         console.log("Session ID: " + req.session.profile.sessionId);
     }
-    let target = await getTargetParts();
-
-    let sql = `SELECT *,
-                      DATE_FORMAT(dob, '%Y-%m-%d') dobISO
-               FROM profile
-               WHERE userId = ${req.session.profile.userId}`;
-
-    let rows = await executeSQL(sql);
-
-    let selected = await getExercises(req.query.target);
-    console.log("Items found: " + selected.length);
+    let target = await getTargetParts(); //get target parts
+    let selected = await getExercises(req.query.target); //get exercises for target
+    let data = await getRoutine(req.session.profile.sessionId); //get routine for session
 
     if (selected.length === 0) {
         res.render("workout", {
+            "userInfo": userInfo,
             sessionId: req.session.profile.sessionId,
-            "userInfo": rows,
             "profile": req.session.profile.userId,
             target: target,
-            routineLog: req.session.profile.currentExercises,
+            routineLog: data,
         });
     } else {
         res.render("workout", {
-            "userInfo": rows,
+            "userInfo": userInfo,
             "profile": req.session.profile.userId,
             target: target,
             exercises: selected,
-            routineLog: req.session.profile.currentExercises
+            routineLog: data
         });
     }
 
@@ -288,28 +254,35 @@ app.post("/workout/add", isAuthenticated, async (req, res) => {
     console.log(req.body);
     let setId = await addToRoutine(req.session.profile.sessionId, req.session.profile.userId, req.body.exercises);
     let exercise = await getExerciseById(req.body.exercises);
-    exercise = exercise[0];
-    exercise.setId = setId;
-
-    req.session.profile.currentExercises.push(exercise);
     res.redirect("/workout");
 
 });
-app.post("/workout/delete", isAuthenticated, async (req, res) => {
+app.post("/workout/update", isAuthenticated, async (req, res) => {
+    console.log("updating: ");
     let sessId = req.session.profile.sessionId;
+    console.log("Session ID: " + sessId);
     let userId = req.session.profile.userId;
+    console.log("User ID: " + userId);
     let setId = req.body.setId;
-
+    console.log("exerciseID: " + setId);
+    let weight = req.body.weight;
+    console.log("weight: " + weight);
+    let reps = req.body.reps;
+    console.log("reps: " + reps);
+    let data = await updateSet(sessId, userId, setId, weight, reps);
+    console.log(data);
+});
+app.post("/workout/delete", isAuthenticated, async (req, res) => {
+    console.log("Deleting: ");
+    let sessId = req.session.profile.sessionId;
+    console.log("Session ID: " + sessId);
+    let userId = req.session.profile.userId;
+    console.log("User ID: " + userId);
+    let setId = req.body.id;
+    console.log("exerciseID: " + setId);
 
     let deletion = await deleteFromRoutine(req.session.profile.sessionId, req.session.profile.userId, req.body.id);
     console.log("Deletion: " + JSON.stringify(deletion));
-    req.session.profile.currentExercises = req.session.profile.currentExercises.filter(item => item.id !== req.body.id);
-    for (const exercise of req.session.profile.currentExercises) {
-        console.log(JSON.stringify(exercise));
-    }
-
-
-    console.log("Checking: " + req.session.profile.currentExercises);
     res.redirect("/workout");
 });
 
@@ -321,12 +294,12 @@ app.get('/api/login/:username', async (req, res) => {
     console.log("Got:" + email);
     if (typeof email === 'undefined' || !email) {
         alert('empty');
-    }
-    else {
+    } else {
         res.send(await checkEmailIsValid(email));
     }
 
 });
+
 
 // EXERCISE API
 app.get('/api/workout/:id', async (req, res) => {
@@ -342,22 +315,34 @@ app.get('/api/workout/:id', async (req, res) => {
     res.send(rows)
 });
 
-app.get('/api/workout/routine/:id', async (req, res) => {
-    let id = req.params.id;
-    console.log(id);
-    let sql = `SELECT *
-               from routine
-               where sessionId = ?`;
-    let params = [id];
-    let rows = await executeSQL(sql, params);
-    res.send(rows);
+app.get('/api/workout/session/:id', async (req, res) => {
+    let data = await getRoutine(req.params.id);
+    res.send(data);
 });
 
 
 ///////////////////////// END APIS  ///////////////////////////////////////
 
 
-
+// get routine for session
+async function getRoutine(sessionId) {
+    let sql = `SELECT *
+               FROM routine, exercises
+               WHERE sessionId = ? and routine.exerciseId = exercises.id;`;
+    let params = [sessionId];
+    return await executeSQL(sql, params);
+}
+// update weight and rep for set
+async function updateSet(sessionId, userId, setId, weight, reps) {
+    let sql = `UPDATE routine
+               SET weight = ?,
+                   reps = ?
+               WHERE sessionId = ?
+                 AND userId = ?
+                 AND setId = ?;`;
+    let params = [weight, reps, sessionId, userId, setId];
+    return await executeSQL(sql, params);
+}
 //delete from routine
 async function deleteFromRoutine(sessionId, userId, exerciseId) {
     let sql = `DELETE
@@ -437,6 +422,7 @@ async function addToRoutine(sessionId, userId, exerciseId, reps, sets) {
     console.log("id: " + rows.insertId);
     return rows.insertId;
 }
+
 async function checkEmailIsValid(email) {
     let sql = `SELECT *
                FROM profile
@@ -455,6 +441,13 @@ function isAuthenticated(req, res, next) {
     } else {
         next();
     }
+}
+function getProfile(userId) {
+    let sql = `SELECT *
+               FROM profile
+               WHERE userId = ?`;
+    let params = [userId];
+    return executeSQL(sql, params);
 }
 
 
