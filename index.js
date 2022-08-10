@@ -271,6 +271,8 @@ app.post("/workout/update", isAuthenticated, async (req, res) => {
     console.log("reps: " + reps);
     let data = await updateSet(sessId, userId, setId, weight, reps);
     console.log(data);
+    res.redirect("/workout");
+
 });
 app.post("/workout/delete", isAuthenticated, async (req, res) => {
     console.log("Deleting: ");
