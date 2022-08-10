@@ -5,7 +5,8 @@
      -->
 
 <%- include("partials/header.ejs") %>
-<div class="workout-container rounded-20 d-flex flex-column text-capitalize">
+<div class="page-container rounded-20 d-flex flex-column text-capitalize">
+
     <div class="workout-header bg-success rounded-top" style="height:10vh;">
         <h2 class="text-center p-4 text-white"><%= userInfo[0].firstName %>'s Workout</h2>
     </div>
@@ -24,103 +25,143 @@
     <div class="exercise-adder d-flex flex-column justify-content-center">
         <h2>Add exercises to routine:</h2>
         <div class="exercise-selector m-auto">
-            <form action="/workout" method="get">
-                <label for="target"></label>
-                <label for="">Area to target</label><br>
-                <select class="form-control" name="target">
-                    <option name="target">Select an area to focus</option>
-                    <% for(var i = 0; i < target.length; i++){ %>
-                        <option name="target" value="<%= target[i].target %>"><%= target[i].target %></option>
-                    <% } %>
-                </select>
-                <button class="btn btn-sm btn-primary">Search</button>
-            </form>
-            <% if(typeof exercises != "undefined"){ %>
-                <label for="exercises">Select Exercise</label><br>
-                <% if(exercises.length > 0){ %>
-                <form action="/workout/add" method="post">
-                    <select class="form-control" name="exercises">
-                        <option name="exercises">Select an exercise</option>
-                        <% for(var i = 0; i < exercises.length; i++){ %>
-                            <option name="exercises" id="<%= exercises[i].name %>" value="<%= exercises[i].id %>">
-                                <%= exercises[i].name %>
-                            </option>
-                        <% } %>
-                    </select>
-                    <button class="btn" id="add-to-routine"><i class="bi bi-plus-circle-fill"></i></button>
-                    <% } else { %>
-                        <p>No exercises found</p>
-                    <% } %>
-                </form>
-            <% } %>
+            <div class=" d-flex justify-content-center mx-auto" style="width:50%;">
+                <div class="col ">
+                    <form action="/workout" method="get">
+
+                        <div class="search-container d-flex flex-row align-items-end mx-auto">
+                            <div id="target-stuff"><label for="target">Area to target</label><br>
+                                <select class="form-control col-sm-4" id="target" name="target">
+                                    <option name="target">Select an area to focus</option>
+                                    <% for(var i = 0; i < target.length; i++){ %>
+                                        <option name="target"
+                                                value="<%= target[i].target %>"><%= target[i].target %></option>
+                                    <% } %>
+                                </select></div>
+                            <div>
+                                <button class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <% if(typeof exercises != "undefined"){ %>
+                    <div class="col"><label for="exercises">Select Exercise</label><br>
+                        <% if(exercises.length > 0){ %>
+                        <form action="/workout/add" method="post">
+                            <div class="narrow-search d-flex flex-row">
+                                <div><select class="form-control col-sm-4" name="exercises">
+                                        <option name="exercises">Select an exercise</option>
+                                        <% for(var i = 0; i < exercises.length; i++){ %>
+                                            <option name="exercises" id="<%= exercises[i].name %>"
+                                                    value="<%= exercises[i].id %>">
+                                                <%= exercises[i].name %>
+                                            </option>
+                                        <% } %>
+                                    </select></div>
+                                <div>
+                                    <button class="btn btn-primary" id="add-to-routine"><i class="bi
+                                    bi-plus-circle-fill"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <% } else { %>
+                                <p>No exercises found</p>
+                            <% } %>
+                        </form>
+                    </div>
+                <% } %>
+            </div>
             <div class="workout-cards">
 
                 <% if(typeof routineLog !== "undefined"){ %>
+                    <% var added = []; %>
                     <% for(var i = 0; i < routineLog.length; i++){ %>
 
-                        <div class="card m-2">
-                            <div class="card-body">
-                                <h5 class="card-title text-capitalize"><%= routineLog[i].name %></h5>
-                                <p class="card-text text-black"><%= routineLog[i].target %></p>
+                        <% if(!added.includes(routineLog[i].id)){ %>
+                            <% added.push(routineLog[i].id); %>
+                            <div class="card m-2">
+                                <div class="card-body">
+                                    <h5 class="card-title text-capitalize"><%= routineLog[i].name %></h5>
+                                    <p class="card-text text-black"><%= routineLog[i].target %></p>
 
-                                <div class="set">
-                                    <div class="input-group">
+                                    <% for(var j = 0; j < routineLog.length; j++){ %>
+                                        <% if(routineLog[i].id === routineLog[j].id){ %>
 
-                                        <form method="post" action="/workout/update">
-                                            <div class="row">
-                                                <div class="col"><label for="Weight">Weight(Lbs)</label>
-                                                    <input type="text" class="form-control col-md-2" id="weight" name="weight"
-                                                           placeholder="Weight"
-                                                           aria-label="Weight" value="<%= routineLog[i].weight %>">
-                                                </div>
+                                            <div class="set">
+                                                <div class="input-group">
+                                                    <form method="post" action="/workout/update">
+                                                        <div class="row">
+                                                            <div class="col"><label for="Weight">Weight(Lbs)</label>
+                                                                <input type="text" class="form-control col-md-2"
+                                                                       id="weight"
+                                                                       name="weight"
+                                                                       placeholder="Weight"
+                                                                       aria-label="Weight"
+                                                                       value="<%= routineLog[j].weight %>">
+                                                            </div>
 
-                                                <div class="col"><label for="Reps">Reps</label>
-                                                    <input type="text" class="form-control col-md-2"
-                                                           name="reps"
-                                                           placeholder="Reps"
-                                                           aria-label="Reps"
-                                                           value="<%= routineLog[i].reps %>">
-                                                </div>
-                                                <div class="col"><input type="hidden" name="setId"
-                                                          value="<%= routineLog[i].setId %>">
+                                                            <div class="col"><label for="Reps">Reps</label>
+                                                                <input type="text" class="form-control col-md-2"
+                                                                       name="reps"
+                                                                       placeholder="Reps"
+                                                                       aria-label="Reps"
+                                                                       value="<%= routineLog[j].reps %>">
+                                                            </div>
+                                                            <div class="col"><input type="hidden" name="setId"
+                                                                                    value="<%= routineLog[j].setId %>">
 
-                                                    <button class="btn btn-success" id="save-set-data"><i class="bi
+                                                                <button class="btn btn-success" id="save-set-data"><i
+                                                                            class="bi
                                             bi-save2"></i></button>
-                                                </div>
-                                            </div>
+                                                            </div>
+                                                        </div>
 
-                                        </form>
+                                                    </form>
 
-                                        <div class="col">
-                                            <form method="post" action="/workout/add">
-                                                <input type="hidden" class="form-control col-sm-4"
-                                                       name="exercises"
-                                                       value="<%= routineLog[i].exerciseId %>">
-                                                <button class="btn btn-primary" aria-label="add-set"><i class="bi
+                                                    <div class="col">
+                                                        <form method="post" action="/workout/add">
+                                                            <input type="hidden" class="form-control col-sm-4"
+                                                                   name="exercises"
+                                                                   value="<%= routineLog[i].exerciseId %>">
+                                                            <button class="btn btn-primary" aria-label="add-set"><i
+                                                                        class="bi
                                         bi-plus"></i></button>
 
-                                            </form>
-                                        </div>
+                                                        </form>
+                                                    </div>
 
 
-                                            <div class="col">
-                                                <form action="/workout/delete" method="post">
-                                                    <input type="hidden" name="id"
-                                                           value="<%= routineLog[i].exerciseId %>">
-                                                    <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                                                </form>
+                                                    <div class="col">
+                                                        <form action="/workout/delete/set" method="post">
+                                                            <input type="hidden" name="setId"
+                                                                   value="<%= routineLog[j].setId %>">
+                                                            <button class="btn btn-danger"><i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+
+
+                                                </div>
+
                                             </div>
 
+                                        <% } %>
 
+                                    <% } %>
+                                    <div class="col">
+                                        <form action="/workout/delete" method="post">
+                                            <input type="hidden" name="id"
+                                                   value="<%= routineLog[i].id %>">
+                                            <button class="btn btn-danger">Delete Exercise</button>
+                                        </form>
                                     </div>
 
                                 </div>
 
 
                             </div>
+                        <% } %>
 
-
-                        </div>
                     <% } %>
                 <% } %>
             </div>

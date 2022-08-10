@@ -148,7 +148,7 @@ app.post("/login", async (req, res) => {
                                    WHERE userId = ${req.session.profile.userId};`;
                 let datetimeParams = [datetime];
                 let datetimeRows = await executeSQL(datetimeSQL, datetimeParams);
-                res.render("landingPage", {"userId": rows, "profile": req.session.profile.userId});
+                res.redirect("/profile");
             } else {
                 res.render("login", {"loginError": true});
             }
@@ -168,7 +168,12 @@ app.get("/profile", isAuthenticated, async (req, res) => {
                WHERE userId = ${req.session.profile.userId}`;
     let rows = await executeSQL(sql);
     req.session.profile = rows[0]
-    res.render("landingPage", {"userInfo": rows, "userId": rows, "profile": req.session.profile.userId});
+    let userId = req.session.profile.userId;
+    console.log(userId);
+    let sessionData = await getSessions(req.session.profile.userId);
+    console.log(sessionData);
+    res.render("landingPage", {"userInfo": rows, "userId": rows, "profile": req.session.profile.userId, workouts: sessionData});
+
 });
 
 // edit profile
@@ -250,6 +255,17 @@ app.get("/workout", isAuthenticated, async (req, res) => {
     }
 
 });
+app.post("/workout/resume", isAuthenticated, async (req, res) => {
+    let sessId = req.body.sessionId;
+    console.log("Session ID: " + sessId);
+    let userId = req.session.profile.userId;
+    console.log("User ID: " + userId);
+    let data = await getRoutine(sessId, userId);
+    req.session.profile.sessionId= sessId;
+    req.session.workoutstarted = true;
+    res.redirect("/workout");
+});
+
 app.post("/workout/add", isAuthenticated, async (req, res) => {
     console.log(req.body);
     let setId = await addToRoutine(req.session.profile.sessionId, req.session.profile.userId, req.body.exercises);
@@ -285,6 +301,18 @@ app.post("/workout/delete", isAuthenticated, async (req, res) => {
 
     let deletion = await deleteFromRoutine(req.session.profile.sessionId, req.session.profile.userId, req.body.id);
     console.log("Deletion: " + JSON.stringify(deletion));
+    res.redirect("/workout");
+});
+app.post("/workout/delete/set", isAuthenticated, async (req, res) => {
+
+    let sessId = req.session.profile.sessionId;
+    console.log("Session ID: " + sessId);
+    let userId = req.session.profile.userId;
+    console.log("User ID: " + userId);
+    let setId = req.body.setId;
+    console.log("exerciseID: " + setId);
+    let data = await deleteSet(sessId, userId, setId);
+    console.log(data);
     res.redirect("/workout");
 });
 
@@ -325,33 +353,58 @@ app.get('/api/workout/session/:id', async (req, res) => {
 
 ///////////////////////// END APIS  ///////////////////////////////////////
 
+//get all user sessions
+async function getSessions(userId) {
+    let sql = `SELECT *
+               FROM workout
+               WHERE userId = ? 
+               order by startTime DESC;`;
+    let params = [userId];
+    let rows = await executeSQL(sql, params);
+    console.log(rows);
+    return rows;
+}
 
 // get routine for session
 async function getRoutine(sessionId) {
     let sql = `SELECT *
-               FROM routine, exercises
-               WHERE sessionId = ? and routine.exerciseId = exercises.id;`;
+               FROM routine,
+                    exercises
+               WHERE sessionId = ?
+                 and routine.exerciseId = exercises.id;`;
     let params = [sessionId];
     return await executeSQL(sql, params);
 }
+
 // update weight and rep for set
 async function updateSet(sessionId, userId, setId, weight, reps) {
     let sql = `UPDATE routine
                SET weight = ?,
-                   reps = ?
+                   reps   = ?
                WHERE sessionId = ?
                  AND userId = ?
                  AND setId = ?;`;
     let params = [weight, reps, sessionId, userId, setId];
     return await executeSQL(sql, params);
 }
-//delete from routine
+
+//delete exercise from routine
 async function deleteFromRoutine(sessionId, userId, exerciseId) {
     let sql = `DELETE
                FROM routine
                WHERE sessionId = ${sessionId}
                  AND userId = ${userId}
                  AND exerciseId = ${exerciseId}`;
+    return await executeSQL(sql);
+}
+
+// delete set from routine
+async function deleteSet(sessionId, userId, setId) {
+    let sql = `DELETE
+               FROM routine
+               WHERE sessionId = ${sessionId}
+                 AND userId = ${userId}
+                 AND setId = ${setId}`;
     return await executeSQL(sql);
 }
 
@@ -371,7 +424,7 @@ async function executeSQL(sql, params) {
             resolve(rows);
         });
     });
-};
+}
 
 
 async function getTargetParts() {
@@ -405,13 +458,13 @@ async function initWorkout(id) {
     return rows.insertId;
 }
 
+
 async function resumeWorkOut(userId) {
     let sql = `SELECT *
                FROM workout
                WHERE userId = ?
-                 and status = ?
-               order by MAX(startTime)`;
-    let params = [userId, true];
+                    AND sessionId = ?;`;
+    let params = [userId, sessionId];
     let rows = await executeSQL(sql, params);
     return rows[0].sessionId;
 }
@@ -444,6 +497,7 @@ function isAuthenticated(req, res, next) {
         next();
     }
 }
+
 function getProfile(userId) {
     let sql = `SELECT *
                FROM profile

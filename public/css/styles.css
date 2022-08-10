@@ -4,7 +4,7 @@ body{
   height: 100%;
   padding:0;
   margin: 0;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
   box-sizing: border-box;
   background-color: #c7c2c2;
 }
@@ -24,7 +24,7 @@ body{
 .red-a{
   color: #d82222;
 }
-h1{
+/*h1{
   color: white;
   font-size: 75px;
   margin: 20px 0px 20px;
@@ -37,7 +37,7 @@ h2{
 }
 p{
   color: white;
-}
+}*/
 #read{
   background-color: transparent;
   color: green;
@@ -160,12 +160,13 @@ p{
 .loginBod button:hover{
   opacity: .7;
 }
-.workout-container{
+.page-container{
   background-color: white;
   border-radius: 20px;
-  min-width: 75vw;
+  width: 75vw;
   min-height: 100vh;
   margin: 0 auto;
+
   
 }
 .aboutContainer{

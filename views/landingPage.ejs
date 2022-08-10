@@ -1,46 +1,63 @@
-<%- include("partials/header.ejs")%>
+<%- include("partials/header.ejs") %>
 
-  <div class = "landingBody">
-  <p id = "landingWelcome">
-  Welcome, 
-  <%= userId[0].firstName %> <br>
+<div class="landingBody">
 
-  <h2>Previous Workout Stats:</h2>
-    <p>Last login: <%= userId[0].lastLogin %></p>
-    <p>Last workout: </p>
-    <p>Last duration: </p>
+    <div class="page-container text-dark">
 
-  <a href="/workout" class="btn btn-primary">Start New Workout</a> <br><br><br>
-  
-  <a href="/profile/edit?userId=<%=userId[0].userId%>" class="btn btn-primary">Update Profile</a> <br>
+        <div id="signUpHeader">
+            <br>
+            <p class="h2 text-black" id="landingWelcome">
+                Welcome,
+                <%= userId[0].firstName %>
+            </p>
+            <br>
+        </div>
+        <h2>Previous Workout Stats:</h2>
+        <p>Last login: <%= userId[0].lastLogin %></p>
+        <p>Last workout: <%= workouts[0].startTime %></p>
+        <p>Last duration: </p>
 
-<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
-  Delete Profile
-</button>
+        <%for(var sess of workouts){%>
+        <%if(sess.status === 0){%>
+            <p>Session <%= sess.sessionId %>: <%= sess.startTime %> </p>
+            <form method ="post" action="/workout/resume">
+                <input type="hidden" name="sessionId" value="<%= sess.sessionId %>">
+                <input type="hidden" name="userId" value="<%= userId[0].userId %>">
+                <button class="btn btn-dark">Resume</button>
+            </form>
+        <%}%>
+        <%}%>
+        <a href="/workout" class="btn btn-primary">Start New Workout</a> <br><br><br>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Are you sure you would like to delete your profile? </h5> 
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        <a href="/profile/edit?userId=<%= userId[0].userId %>" class="btn btn-primary">Update Profile</a> <br>
+
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+            Delete Profile
         </button>
-      </div>
-      <div class="modal-footer">
-        <a href="/profile/delete?userId=<%=userId[0].userId%>" type="button" class="btn btn-danger" >Confirm Delete</a>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-      </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure you would like to delete your
+                            profile? </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="/profile/delete?userId=<%= userId[0].userId %>" type="button" class="btn btn-danger">Confirm
+                            Delete</a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+
 </div>
-  
- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  <script src="/js/script.js"></script>
-  </div>
 
 
-  <%- include("partials/footer.ejs")%>
+<%- include("partials/footer.ejs") %>
