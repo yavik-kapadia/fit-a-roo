@@ -30,24 +30,24 @@
                 <select class="form-control" name="target">
                     <option name="target">Select an area to focus</option>
                     <% for(var i = 0; i < target.length; i++){ %>
-                        <option name="target" value="<%= target[i].target %>"><%= target[i].target%></option>
+                        <option name="target" value="<%= target[i].target %>"><%= target[i].target %></option>
                     <% } %>
                 </select>
                 <button class="btn btn-sm btn-primary">Search</button>
             </form>
             <% if(typeof exercises != "undefined"){ %>
-                    <label for="exercises">Select Exercise</label><br>
-                    <% if(exercises.length > 0){ %>
+                <label for="exercises">Select Exercise</label><br>
+                <% if(exercises.length > 0){ %>
                 <form action="/workout/add" method="post">
-                        <select class="form-control" name="exercises">
-                            <option name="exercises">Select an exercise</option>
-                            <% for(var i = 0; i < exercises.length; i++){ %>
-                                <option name="exercises" id="<%=exercises[i].name%>" value="<%=exercises[i].id %>">
-                                    <%= exercises[i].name%>
-                                </option>
-                            <% } %>
-                        </select>
-                        <button class="btn" id="add-to-routine"><i class="bi bi-plus-circle-fill"></i></button>
+                    <select class="form-control" name="exercises">
+                        <option name="exercises">Select an exercise</option>
+                        <% for(var i = 0; i < exercises.length; i++){ %>
+                        <option name="exercises" id="<%= exercises[i].name %>" value="<%= exercises[i].id %>">
+                            <%= exercises[i].name %>
+                        </option>
+                        <% } %>
+                    </select>
+                    <button class="btn" id="add-to-routine"><i class="bi bi-plus-circle-fill"></i></button>
                     <% } else { %>
                         <p>No exercises found</p>
                     <% } %>
@@ -55,7 +55,7 @@
             <% } %>
             <div class="workout-cards">
 
-                <%if(typeof routineLog !== "undefined"){%>
+                <% if(typeof routineLog !== "undefined"){ %>
                     <% for(var i = 0; i < routineLog.length; i++){ %>
                         <div class="card m-2">
                             <div class="card-body">
@@ -80,7 +80,7 @@
                             </div>
                         </div>
                     <% } %>
-                <%}%>
+                <% } %>
             </div>
         </div>
     </div>
