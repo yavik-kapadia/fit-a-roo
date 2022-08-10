@@ -1,3 +1,4 @@
+
 body{
   width: 100%;
   height: 100%;
@@ -20,7 +21,7 @@ body{
   letter-spacing: 1px;
   cursor: pointer;
 }
-span{
+.red-a{
   color: #d82222;
 }
 h1{
@@ -29,6 +30,12 @@ h1{
   margin: 20px 0px 20px;
 }
 h3{
+  color: white;
+}
+h2{
+  color: white;
+}
+p{
   color: white;
 }
 #read{
@@ -97,6 +104,10 @@ h3{
   color: #c02121;
 }
 .loginBkGr{
+  background-image: url(/img/hero/hero2.webp);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   min-height: 100vh;
   display: flex;
 }
@@ -125,6 +136,7 @@ h3{
   border-radius: 4px;
   border: 1px solid silver;
 }
+
 .loginBod button {
   margin-left: 50%;
   margin-top: 5%;
@@ -158,7 +170,7 @@ h3{
 .forBKG{
   background-image:     url(/img/hero/hero6.webp);
   width: 100%;
-  height: 650px;
+  height: 40rem;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -167,15 +179,14 @@ h3{
    margin-top: 5%;
    margin-left: 5%;
  }
-#aboutH2{
-}
+
 div.aboutInsideBottom{
   text-align: center;
 }
 /* contact page */
 #contactBody{
   width: 100%;
-  height: 100%;
+  height: 100vh;
   padding: 0;
   margin: 0;
   background-image: url(/img/hero/hero1.webp);
@@ -192,7 +203,7 @@ div.aboutInsideBottom{
   width: 100%;
   display: inline-block;
   text-align: center;
-  margin-top: 15%;
+  margin-top: 5%;
   margin-left: 50%;
   transform: translate(-50%,-50%);
 }
@@ -236,5 +247,26 @@ div.aboutInsideBottom{
   display: block;
 }
 #landingWelcome{
-  text-size: 1rem;
+  text-size: 2rem;
+  color: white;
+}
+.landingBody{
+  width: 100%;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  background-image: url(/img/hero/hero3.webp);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.formBody{
+  width: 100%;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  background-image: url(/img/hero/hero4.webp);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }

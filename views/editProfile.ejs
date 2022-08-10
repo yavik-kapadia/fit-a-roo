@@ -1,13 +1,8 @@
-<!--- display user profile, allow for user to update personal info --->
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Edit Profile</title>
   <%- include("partials/header.ejs")%>
-</head>
-<body>
+
+  
+  <div class="formBody" style="width=70%;">
   <% if (typeof message != "undefined"){ %>
     <h2><%=message%></h2>
   <% } %>
@@ -32,23 +27,19 @@
     <input type="email" class="form-control" name="email" value="<%=userInfo[0].email%>">
     <br>
 
-    <h2>Password (hashed):</h2>
-    <input type="text" class="form-control" name="password" value="<%=userInfo[0].password%>">
+    <h2>Password:</h2>
+    <input type="password" class="form-control" name="password" value="<%=userInfo[0].password%>">
     <br>
 
     <h2>Goals:</h2>
     <input type="text" class="form-control" name="goals" value="<%=userInfo[0].goals%>">
     <br>
 
- 
+
     <button class="btn btn-dark">Update Profile</button>
   </form>
-        
   </div>
-  <br><br><br>
 
-</body>
-<footer>
+
   <%- include("partials/footer.ejs")%>
-</footer>
-</html>
+
