@@ -14,7 +14,7 @@
           <a class="nav-link" href="/">Home</a>
         </li>
   <% }else{ %>
-    <a class="navbar-brand" href="/home">Fit<span class="red-a">-A-</span>Roo</a>
+    <a class="navbar-brand" href="/">Fit<span class="red-a">-A-</span>Roo</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -44,16 +44,12 @@
           <button class="btn btn-danger my-2 my-sm-0" type="submit">Sign Up</button>
         </form>
     <% }else{ %>
-
       <form action="/profile?userId=<%=profile%>">
         <button class="btn btn-danger my-2 my-sm-0" type="submit">Profile</button>
       </form>
       <form action="/logout">
         <button class="btn btn-danger my-2 my-sm-0" type="submit">Log Out</button>
       </form>
-
     <%}%>     
-
-    
   </div>
 </nav>

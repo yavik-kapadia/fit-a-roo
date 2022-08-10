@@ -62,8 +62,7 @@ app.get("/exerciseExplorer", async (req, res) => {
 
   let sqlTarget = `SELECT DISTINCT target
              FROM exercises;`;
-  let rowsTarget = await executeSQL(sqlTarget);
-  
+  let rowsTarget = await executeSQL(sqlTarget);  
   let sqlParts = `SELECT DISTINCT bodyPart
              FROM exercises;`;
   let rowsParts = await executeSQL(sqlParts);
@@ -120,29 +119,34 @@ app.get("/login", async (req,res) => {
   res.render("login");
 });
 
-app.get('/api/login/:username', async (req, res) => {
-  let username = req.params.username;
-  let sql = `SELECT email
-            FROM profile
-            WHERE email = ?;`;    
-  let params = [username];
-  let rows = await executeSQL(sql, params);
-  res.send(rows)
-});
 
 app.post("/login", async (req, res) => {
+  let password = req.body.password;
   let username = req.body.username;
-  let url = `https://fit-a-roo.yavik.repl.co/api/login/` + username;
+  //this might be no bueno we should be using a different method
+  let url = `https://fit-a-roo.yavik.repl.co/api/login/${username}`;
   let response = await fetch(url);
   let data = await response.json();
-  console.log("user: " + username);
-  console.log("db: " + data[0].email);
-  let validUser = (username == data[0].email);
-  console.log("validUser: " + validUser);
-  let password = req.body.password;
-  let sql = `SELECT * FROM profile WHERE email = ?`;
-  let rows = await executeSQL(sql, [username]);
+  if(data.length != 0){
+  console.log("found: "+data[0].email);
+  } else{
+    console.log("No data");
+  }
+  if (data.length > 0) {
+  
+  let dbUsername = data[0].email;
+  let validUser = (username == dbUsername);
+  
+  let sql = `SELECT * FROM profile WHERE email = ? `;
+  let rows = await executeSQL(sql, username, password);
   const result = await bcrypt.compare(password, rows[0].password);
+
+  console.log("user: " + username);
+  console.log(typeof(username));
+  console.log("data[0].email: " + data[0].email);
+  console.log(typeof(data[0].email));
+  console.log("validUser: " + validUser);
+  
   if (validUser){
     if (result) { 
     req.session.authenticated = true;
@@ -161,6 +165,11 @@ app.post("/login", async (req, res) => {
   else {
     res.render("login", {"loginError": true});
   }
+  }
+  else {
+    res.render("login", {"loginError": true});
+  }
+  
 });
 
 // profile and landing page
@@ -210,19 +219,20 @@ app.post("/profile/edit", isAuthenticated, async (req, res) =>
 
 // delete profile
 app.get("/profile/delete", isAuthenticated, async function(req, res){
-  let sql = `DELETE
-               FROM profile
-              WHERE userId = ${req.session.profile.userId}`;
-  let rows = await executeSQL(sql);
+  let sql = "DELETE FROM profile WHERE userId = ?;";
+  let params = [req.session.profile.userId];
+  let rows = await executeSQL(sql, params);
   res.redirect('/', {"profile":req.session.profile});
 });
 
 app.get("/workout", isAuthenticated, async (req, res) => {
-    console.log("Workout start: " + req.session.workoutstarted);
-    if(req.session.workoutstarted === false) {
-
+    console.log("userId: "+ req.session.profile.userId)
+    console.log("Check 1 - Workout start: " + req.session.workoutstarted);
+  
+    if(req.session.workoutstarted === false || typeof req.session.workoutstarted === "undefined") {
+        console.log("userId: " + req.session.profile.userId);
         req.session.workoutstarted = true;
-
+           console.log("Check 2 - Workout start: " + req.session.workoutstarted);
         req.session.profile.currentExercises = [];
 
         req.session.profile.sessionId = await initWorkout(req.session.profile.userId);
@@ -277,7 +287,46 @@ app.post("/workout/delete", isAuthenticated, async (req, res) => {
     currentExercises = req.session.profile.currentExercises.filter(item => item.id !== req.body.id);
     res.redirect("/workout");
 
+///////////////////////// START APIS //////////////////////////////////////
+  
+// USERNAME VALIDATION API
+app.get('/api/login/:username', async (req, res) => {
+  let username = req.params.username;
+  if ( typeof username === 'undefined' || !username ) {
+    alert('empty');
+}
+  console.log(usernae);
+  // let sql = `SELECT email
+  //           FROM profile
+  //           WHERE email = ?;`;    
+  // let params = [username];
+  // let rows = await executeSQL(sql, params);
+  // res.send(rows)
+});
+// EXERCISE API
+app.get('/api/workout/:id', async (req, res) => {
+  let id = req.params.id;
+  let sql = `SELECT *
+            FROM exercises
+            WHERE target LIKE ? OR bodyPart LIKE ? OR name LIKE ? OR id = ?;`;    
+  let params = [`%${id}%`, `%${id}%`, `%${id}%`, id];
+  let rows = await executeSQL(sql, params);
+  res.send(rows)
+});
 
+app.get('/api/workout/routine/:id', async(req, res)=> {
+  let id = req.params.id;
+  console.log(id);
+  let sql = `SELECT * from routine where sessionId=?`;
+  let params= [id];
+  let rows = await executeSQL(sql, params);
+  res.send(rows);
+});
+
+
+  
+///////////////////////// END APIS  ///////////////////////////////////////
+  
 });
 //delete from routine
 async function deleteFromRoutine(sessionId, userId, exerciseId) {
@@ -364,6 +413,7 @@ function isAuthenticated(req,res,next) {
     next();
   }
 }
+
 
 //start server
 app.listen(3000, () => {

@@ -1,11 +1,5 @@
-<!--- Landing page --->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <%- include("partials/header.ejs")%>
-  <title>Landing Page</title>
-</head>
-<body>
+<%- include("partials/header.ejs")%>
+
   <div class = "landingBody">
   <p id = "landingWelcome">
   Welcome, 
@@ -16,7 +10,7 @@
     <p>Last workout: </p>
     <p>Last duration: </p>
 
-  <a href="/workout?userId=<%=userId[0].userId%>">Start New Workout</a> <br><br><br>
+  <a href="/workout" class="btn btn-primary">Start New Workout</a> <br><br><br>
   
   <a href="/profile/edit?userId=<%=userId[0].userId%>" class="btn btn-primary">Update Profile</a> <br>
 
@@ -47,8 +41,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script src="/js/script.js"></script>
   </div>
-</body>
+
 
   <%- include("partials/footer.ejs")%>
-
-</html>
