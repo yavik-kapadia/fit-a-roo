@@ -1,25 +1,28 @@
 <%- include("partials/header.ejs") %>
-
+<div class="page">
 <div class="landingBody">
 
     <div class="page-container text-dark">
 
-        <div id="signUpHeader">
+        <div style="background-color: #01FEAF;
+  text-align: center; border-top-left-radius: 10px;
+  border-top-right-radius: 10px;">
             <br>
             <p class="h2 text-black" id="landingWelcome">
                 Welcome,
-                <%= userId[0].firstName %>
+                <%= userId[0].firstName %> !
             </p>
             <br>
         </div>
-        <h2>Previous Workout Stats:</h2>
-        <p>Last login: <%= userId[0].lastLogin %></p>
-        <p>Last workout: <%= workouts[0].startTime %></p>
-        <p>Last duration: </p>
+      <div style="padding: 10px;">
+        <h2 class="text-black">Previous Workout Stats:</h2>
+        <p class="text-black">Last login: <%= userId[0].lastLogin %></p>
+        <p class="text-black">Last workout: </p>
+        <p class="text-black">Last duration: </p>
 
         <%for(var sess of workouts){%>
         <%if(sess.status === 0){%>
-            <p>Session <%= sess.sessionId %>: <%= sess.startTime %> </p>
+            <p>Session: <%= sess.sessionId %>: <%= sess.startTime %> </p>
             <form method ="post" action="/workout/resume">
                 <input type="hidden" name="sessionId" value="<%= sess.sessionId %>">
                 <input type="hidden" name="userId" value="<%= userId[0].userId %>">
@@ -27,14 +30,17 @@
             </form>
         <%}%>
         <%}%>
-        <a href="/workout" class="btn btn-primary">Start New Workout</a> <br><br><br>
+        <br>
+        <a href="/workout" class="btn btn-fit">Start New Workout</a> <br><br><br>
 
-        <a href="/profile/edit?userId=<%= userId[0].userId %>" class="btn btn-primary">Update Profile</a> <br>
-
-        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
-            Delete Profile
-        </button>
-
+        <div class="text-center">
+          <a href="/profile/edit?userId=<%= userId[0].userId %>" class="btn btn-fit">Update Profile</a>
+  
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal" style="margin-left:1rem;">
+              Delete Profile
+          </button>
+        </div>
+      </div>
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
              aria-hidden="true">
@@ -58,6 +64,7 @@
     </div>
 
 </div>
-
-
+<br>
+          </div>
+<script src="js/profile.js"></script>
 <%- include("partials/footer.ejs") %>

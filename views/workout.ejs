@@ -5,10 +5,11 @@
      -->
 
 <%- include("partials/header.ejs") %>
+  <div class="page">
 <div class="page-container rounded-20 d-flex flex-column text-capitalize">
 
-    <div class="workout-header bg-success rounded-top" style="height:10vh;">
-        <h2 class="text-center p-4 text-white"><%= userInfo[0].firstName %>'s Workout</h2>
+    <div class="workout-header rounded-top" style="height:10vh; background-color: #01FEAF; color: black;">
+        <h2 class="text-center p-4"><%= userInfo[0].firstName %>'s Workout</h2>
     </div>
     <div class=" timer p-4 mx-auto">
         <div class="p-1 h2 text-center">
@@ -22,16 +23,16 @@
             <button class="btn btn-sm btn-warning" id="reset">Reset</button>
         </div>
     </div>
-    <div class="exercise-adder d-flex flex-column justify-content-center">
-        <h2>Add exercises to routine:</h2>
+  <hr>
+    <div class=" exercise-adder d-flex flex-column justify-content-center" style="padding: 10px">
+        <p class="h4 text-center">Add exercises to routine:</h4>
         <div class="exercise-selector m-auto">
-            <div class=" d-flex justify-content-center mx-auto" style="width:50%;">
+            <div class=" d-flex justify-content-center mx-auto" style="width:70%;">
                 <div class="col ">
                     <form action="/workout" method="get">
-
                         <div class="search-container d-flex flex-row align-items-end mx-auto">
                             <div id="target-stuff"><label for="target">Area to target</label><br>
-                                <select class="form-control col-sm-4" id="target" name="target">
+                                <select class="form-control" id="target" name="target">
                                     <option name="target">Select an area to focus</option>
                                     <% for(var i = 0; i < target.length; i++){ %>
                                         <option name="target"
@@ -71,6 +72,7 @@
                     </div>
                 <% } %>
             </div>
+                  <hr>
             <div class="workout-cards">
 
                 <% if(typeof routineLog !== "undefined"){ %>
@@ -120,7 +122,7 @@
 
                                                     <div class="col">
                                                         <form method="post" action="/workout/add">
-                                                            <input type="hidden" class="form-control col-sm-4"
+                                                            <input type="hidden" class="form-control"
                                                                    name="exercises"
                                                                    value="<%= routineLog[i].exerciseId %>">
                                                             <button class="btn btn-primary" aria-label="add-set"><i
@@ -168,13 +170,18 @@
 
         </div>
     </div>
+  
+   <form action="/workout/end" method="post" class="d-flex justify-content-center align-items-end bottom">
+    <button class="btn btn-danger">End Workout</button>
+  </form>
+                  
+<div class="d-flex justify-content-center align-items-end bottom">
+    <a class="btn btn-primary" href="/profile>">Back to Profile</a>
 </div>
 
-<div class="d-flex justify-content-center align-items-end bottom">
-    <a class="btn btn-primary" href="/profile?userId=<%= userInfo[0].userId %>">Back to Profile</a>
+
 </div>
 <script src="js/workout.js"></script>
 
-
+</div>
 <%- include("partials/footer.ejs") %>
-   

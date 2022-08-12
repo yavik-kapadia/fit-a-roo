@@ -1,5 +1,6 @@
 <!--- Login page --->
 <%- include("partials/header.ejs")%>
+  <div class="page">
   <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.2/css/fontawesome.min.css"></script>
 <div class = "loginBkGr">
   <div class = "loginBod">
@@ -7,9 +8,9 @@
     <div class ="form-group">
       <h1 id = "loginH1">Login</h1>
       <form method="POST">
-        <label for="username">username:</label> <input type="text" name="username" id="username"> <br>
-        <label for="password">password:</label> <input type="password" id="password" name="password"> <br>
-        <button id="loginButton">Login</button>
+        <label for="username">Username:</label> <input type="text" name="username" id="username"> <br>
+        <label for="password">Password:</label> <input type="password" id="password" name="password"> <br>
+        <button class="btn btn-fit" id="loginButton">Login</button>
       </form>
       
     </div>  
@@ -19,4 +20,6 @@
   </div>
     
 </div>
+<br>
+  </div>
   <%- include("partials/footer.ejs")%>

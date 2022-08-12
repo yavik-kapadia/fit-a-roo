@@ -6,7 +6,6 @@ body{
   margin: 0;
   font-family: 'Nunito Sans', sans-serif;
   box-sizing: border-box;
-  background-color: #c7c2c2;
 }
 .hero{
   height: 100vh;
@@ -22,22 +21,9 @@ body{
   cursor: pointer;
 }
 .red-a{
-  color: #d82222;
+  color: #FEAF01
 }
-/*h1{
-  color: white;
-  font-size: 75px;
-  margin: 20px 0px 20px;
-}
-h3{
-  color: white;
-}
-h2{
-  color: white;
-}
-p{
-  color: white;
-}*/
+
 #read{
   background-color: transparent;
   color: green;
@@ -50,7 +36,6 @@ p{
 #profile{
   float: right;
 }
-
 #cards{
   margin: auto;
 }
@@ -65,28 +50,15 @@ p{
 .workoutCard{
   height: 5rem;
 }
-.dropdown{
-   margin-left: 2rem;
-}
+
 /* Exercise Explorer Page */
 #searchOptionsEP{
   max-width: 50rem;
   margin:auto;
   display:center;
-  padding-left: 0;
-  padding-right: 0;
-}
-#searchExercise{
-  margin-left: 2rem;
 }
 #workoutInfo{
   text-align:center;
-}
-#targetBttn, #bodyPartBttn, #signUpBttn{
-  background-color: #AF01FE;
-  color: white;
-  border: none;
-  border-radius: 8px;
 }
 /* Sign Up Page */
 #signUpForm{
@@ -96,14 +68,18 @@ p{
  border-radius: 10px;
  background-color: white;
 }
-#signUpHeader{
+.formBody{
+color: pink;
+}
+.signUpHeader{
   background-color: #01FEAF;
   text-align: center;
   height: 4rem;
-  color: black;
+  color: white;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
+
 .values{
   color: #c02121;
 }
@@ -129,7 +105,7 @@ p{
   box-shadow: 0 8px 16px black;
 }
 #loginH1{
-  color: #d41616;
+  color: black;
   font-size: 50px;
   text-align: center;
 }
@@ -149,7 +125,6 @@ p{
   height: 34px;
   border: none;
   outline: none;
-  background: #d41616;
   cursor: pointer;
   font-size: 16px;
   text-transform: uppercase;
@@ -166,8 +141,6 @@ p{
   width: 75vw;
   min-height: 100vh;
   margin: 0 auto;
-
-  
 }
 .aboutContainer{
   min-height: 100vh;
@@ -175,13 +148,14 @@ p{
 .forBKG{
   background-image: url(/img/hero/hero6.webp);
   width: 100%;
-  height: 40rem;
+ 
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
  div.aboutInside{
-   margin-left: 5%;
+    padding:10%;
+    backdrop-filter: blur(5px);
  }
 
 div.aboutInsideBottom{
@@ -199,6 +173,10 @@ div.aboutInsideBottom{
   background-repeat: no-repeat;
   text-align: center;
   
+}
+.page{
+  min-height: 75vh;
+   padding-bottom: 2.5rem;
 }
 .contactInside ul{
   list-style: none;
@@ -234,23 +212,24 @@ div.aboutInsideBottom{
   line-height: 50px;
 }
 
-.dropdown{
+.dropdown-contact{
   top: 100%;
   width: 100%;
   padding: 0; 
   left: 0;
 }
-.dropdown li{
+.dropdown-contact li{
   background: #313131;
   display: none;
 }
-.dropdown li:hover{
+.dropdown-contact li:hover{
   background: #029bd5;
   position: absolute;
 }
-.contactInside li:hover > .dropdown li {
+.contactInside li:hover > .dropdown-contact li {
   display: block;
 }
+
 #landingWelcome{
   text-size: 2rem;
   color: white;
@@ -275,3 +254,19 @@ div.aboutInsideBottom{
   background-position: center center;
   background-repeat: no-repeat;
 }
+#csumb-logo{
+  width:200px;
+  height:auto;
+}
+.btn-fit{
+  background-color:#AF01FE;
+  border:#AF01FE;
+  color: white;
+}
+.btn-fit:hover{
+  background-color:#c563f2;
+  border:#AF01FE:
+}
+
+
+

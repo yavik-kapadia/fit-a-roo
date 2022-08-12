@@ -41,19 +41,19 @@ async function getWorkoutInfo(){
   searchMsg.innerHTML="";
   
   if(workouts.length == 0){
-    searchMsg.innerHTML='<h5 class="text-center"><b>NOT FOUND...</b></h5>';
+    searchMsg.innerHTML='<h4 class="text-center" style="color: red;"><b>NOT FOUND...</b></h4>';
   }
   else{
-    searchMsg.innerHTML=`<h5 class="text-center"><b>DISPLAYING "${value}" EXERCISES </b></h5>`;
+    searchMsg.innerHTML=`<h4 class="text-center" style="color: white;"><b>Displaying "${value}" exercises </b></h4>`;
   
     for(workout of workouts){
       exercise.innerHTML +=`<div class="col"><br>
       <div class="workoutCard">
-        <h5 class="card-title"><b>Workout</b>: ${workout.name}</h5>
-        <br><br>
+        <h5 class="text-center"><b>${workout.name}</b></h5>
+        <br>
       </div>
       <div class="text-center" id="viewInfoDiv">
-          <button class="btn btn-warning" href="#" onclick="getModalInfo(${workout.id})">View Info</button>
+          <button class="btn btn-fit" href="#" onclick="getModalInfo(${workout.id})">View Info</button>
         </div>
         <br>
     </div>`;

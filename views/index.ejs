@@ -1,15 +1,20 @@
 
 <%- include("partials/header.ejs")%>
-<!----hero ----->
+<div class="page">
 
- <div class = "hero">
-  <div class = "welcomeQuote">
+ <div class = "hero m-auto d-flex align-items-center">
+  <div class = "welcomeQuote text-center m-auto text-white">
     <br><br><br>
-    <h1>First step matters.</h1><br>
-    <h3>Do not let others say you cannot do it.</h3>
-    <h3>Prove them wrong!</h3><br>
-
- <button id = "read"> Read More </button>
+    <h1 class="display-1">Wellness Matters.</h1><br>
+    <h3 class="display-3">Take the first step today. </h3><br>
+    <h5 Class="display-5">Join Fit-A-Roo</h5><br>
+<%if (!locals.session.loggedin) { %>
+ <a href="/signup" class = "btn btn-lg btn-fit read"> Sign Up </a>
+  <%}else{%>
+    <a href="/profile" class = "btn btn-lg btn-fit read"> View Profile </a>
+    <%}%>
   </div>
  </div>
+<br>
+    </div>
 <%- include("partials/footer.ejs")%>

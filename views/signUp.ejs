@@ -1,15 +1,21 @@
 <!--- sign up --->
-<!DOCTYPE html>
-<html lang="en">
-<head>
+
   <%- include("partials/header.ejs")%>
-  <title>Login</title>
-</head>
-<body>
+<div class="page">
+<div class="page-form-page" style="width: 100%;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  background-image: url(/img/hero/hero5.webp);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;">
+  <div style="min-height: 70vh;
+  display: flex;">
   <form method="POST" action="/user/new" class="row" id="signUpForm">
-    <div id="signUpHeader">
+    <div class="signUpHeader">
       <br>
-      <h5>Sign Up</h5>
+      <h3 class="text-center font-weight-bold text-black">Sign Up</h5>
       <br>
     </div>
     <div class="signUpCol">
@@ -33,12 +39,12 @@
       <input type="text" class="form-control" name="goals"><br>
     </div>
     <div class="text-center">
-      <button id="signUpBttn" class="btn">Sign Up</button>
+      <button id="signUpBttn" class="btn btn-fit">Sign Up</button>
       <br><br>
     </div>
   </form>
-</body>
-<footer>
+  </div>
+  <br>
+</div>
+</div>
   <%- include("partials/footer.ejs")%>
-</footer>
-</html>

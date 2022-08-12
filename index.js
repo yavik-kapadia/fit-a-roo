@@ -110,15 +110,6 @@ app.get("/login", async (req, res) => {
 app.post("/login", async (req, res) => {
     let password = req.body.password;
     let username = req.body.username;
-    //this might be no bueno we should be using a different method
-    //let url = `https://fit-a-roo.yavik.repl.co/api/login/${username}`;
-    //let response = await fetch(url);
-    //let data = await response.json();
-    //if (data.length !== 0) {
-    //    console.log("found: " + data[0].email);
-    //} else {
-    //    console.log("No data");
-    //}
     let data = await checkEmailIsValid(username);
     if (data.length > 0) {
 
@@ -141,7 +132,7 @@ app.post("/login", async (req, res) => {
             if (result) {
                 req.session.authenticated = true;
                 req.session.loggedin = true;
-                req.session.profile = rows[0];
+                req.session.profile = data[0];
                 var datetime = pst;
                 let datetimeSQL = `UPDATE profile
                                    SET lastLogin = ?
@@ -194,14 +185,13 @@ app.post("/profile/edit", isAuthenticated, async (req, res) => {
                    email     = ?,
                    password  = ?,
                    goals     = ?
-               WHERE userId = ?`;
+               WHERE userId = ${req.session.profile.userId}`;
     let params = [req.body.fName,
         req.body.lName,
         req.body.dob,
         req.body.email,
         req.body.password,
-        req.body.goals,
-        req.body.userId];
+        req.body.goals];
     let rows = await executeSQL(sql, params);
     sql = `SELECT *,
                   DATE_FORMAT(dob, '%Y-%m-%d') dobISO
@@ -209,11 +199,11 @@ app.post("/profile/edit", isAuthenticated, async (req, res) => {
            WHERE userId = ${req.session.profile.userId}`;
     rows = await executeSQL(sql);
     res.render("editProfile", {"userInfo": rows, "message": "Profile Updated!", "profile": req.session.profile.userId});
-})
+});
 
 // delete profile
 app.get("/profile/delete", isAuthenticated, async function (req, res) {
-    let sql = "DELETE FROM profile WHERE userId = ?;";
+    let sql = "DELETE FROM profile WHERE userId = ${req.session.profile.userId};";
     let params = [req.session.profile.userId];
     let rows = await executeSQL(sql, params);
     res.redirect('/', {"profile": req.session.profile});
@@ -264,6 +254,19 @@ app.post("/workout/resume", isAuthenticated, async (req, res) => {
     req.session.profile.sessionId= sessId;
     req.session.workoutstarted = true;
     res.redirect("/workout");
+});
+
+app.post("/workout/end", isAuthenticated, async (req, res) => {
+
+    req.session.workoutstarted = false;
+
+    let sessId = req.session.profile.sessionId;
+    
+    let sql = `UPDATE workout set status = 0 WHERE sessionId = ?;`;
+    let params= [sessId];
+    let rows = executeSQL(sql, params);
+    
+    res.redirect("/profile");
 });
 
 app.post("/workout/add", isAuthenticated, async (req, res) => {
@@ -363,7 +366,7 @@ async function getSessions(userId) {
     let rows = await executeSQL(sql, params);
     console.log(rows);
     return rows;
-}
+};
 
 // get routine for session
 async function getRoutine(sessionId) {
@@ -374,7 +377,7 @@ async function getRoutine(sessionId) {
                  and routine.exerciseId = exercises.id;`;
     let params = [sessionId];
     return await executeSQL(sql, params);
-}
+};
 
 // update weight and rep for set
 async function updateSet(sessionId, userId, setId, weight, reps) {
@@ -386,7 +389,7 @@ async function updateSet(sessionId, userId, setId, weight, reps) {
                  AND setId = ?;`;
     let params = [weight, reps, sessionId, userId, setId];
     return await executeSQL(sql, params);
-}
+};
 
 //delete exercise from routine
 async function deleteFromRoutine(sessionId, userId, exerciseId) {
@@ -396,7 +399,7 @@ async function deleteFromRoutine(sessionId, userId, exerciseId) {
                  AND userId = ${userId}
                  AND exerciseId = ${exerciseId}`;
     return await executeSQL(sql);
-}
+};
 
 // delete set from routine
 async function deleteSet(sessionId, userId, setId) {
@@ -406,7 +409,7 @@ async function deleteSet(sessionId, userId, setId) {
                  AND userId = ${userId}
                  AND setId = ${setId}`;
     return await executeSQL(sql);
-}
+};
 
 // logout
 app.get("/logout", isAuthenticated, (req, res) => {
@@ -424,21 +427,21 @@ async function executeSQL(sql, params) {
             resolve(rows);
         });
     });
-}
+};
 
 
 async function getTargetParts() {
     let sqlTarget = `SELECT DISTINCT target
                      FROM exercises;`;
     return await executeSQL(sqlTarget)
-}
+};
 
 async function getExerciseById(id) {
     let sql = `SELECT *
                FROM exercises
                WHERE id = ${id}`;
     return await executeSQL(sql);
-}
+};
 
 async function getExercises(target) {
     let sqlExercise = `SELECT *
@@ -446,7 +449,7 @@ async function getExercises(target) {
                        WHERE target LIKE ?;`;
     let params = [target];
     return await executeSQL(sqlExercise, params);
-}
+};
 
 
 async function initWorkout(id) {
@@ -456,7 +459,7 @@ async function initWorkout(id) {
     let rows = await executeSQL(sql, params);
     console.log(rows.insertId);
     return rows.insertId;
-}
+};
 
 
 async function resumeWorkOut(userId) {
@@ -467,7 +470,7 @@ async function resumeWorkOut(userId) {
     let params = [userId, sessionId];
     let rows = await executeSQL(sql, params);
     return rows[0].sessionId;
-}
+};
 
 async function addToRoutine(sessionId, userId, exerciseId, reps, sets) {
     let sql = `INSERT INTO routine(sessionId, userId, exerciseId)
@@ -476,7 +479,7 @@ async function addToRoutine(sessionId, userId, exerciseId, reps, sets) {
     let rows = await executeSQL(sql, params);
     console.log("id: " + rows.insertId);
     return rows.insertId;
-}
+};
 
 async function checkEmailIsValid(email) {
     let sql = `SELECT *
@@ -484,7 +487,7 @@ async function checkEmailIsValid(email) {
                WHERE email = ?`;
     let params = [email];
     return await executeSQL(sql, params);
-}
+};
 
 //functions
 
@@ -496,7 +499,7 @@ function isAuthenticated(req, res, next) {
     } else {
         next();
     }
-}
+};
 
 function getProfile(userId) {
     let sql = `SELECT *
@@ -504,7 +507,7 @@ function getProfile(userId) {
                WHERE userId = ?`;
     let params = [userId];
     return executeSQL(sql, params);
-}
+};
 
 
 //start server
