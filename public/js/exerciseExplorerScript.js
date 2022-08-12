@@ -44,12 +44,12 @@ async function getWorkoutInfo(){
     searchMsg.innerHTML='<h4 class="text-center" style="color: red;"><b>NOT FOUND...</b></h4>';
   }
   else{
-    searchMsg.innerHTML=`<h4 class="text-center" style="color: white;"><b>Displaying "${value}" exercises </b></h4>`;
+    searchMsg.innerHTML=`<h4 class="text-center" style="color: white; font-family: 'Montserrat', sans-serif;"><b>Displaying "${value}" exercises </b></h4>`;
   
     for(workout of workouts){
       exercise.innerHTML +=`<div class="col"><br>
       <div class="workoutCard">
-        <h5 class="text-center"><b>${workout.name}</b></h5>
+        <h5 class="text-center" style="font-family: 'Montserrat', sans-serif;"><b>${workout.name}</b></h5>
         <br>
       </div>
       <div class="text-center" id="viewInfoDiv">

@@ -8,7 +8,7 @@
         </button>
         <ul class="dropdown-menu">
           <% for (target of targets) { %>
-          <li><a class="dropdown-item" href="#" name="target" id="<%=target.target%>"><%=target.target%></a></li>
+          <li><a class="dropdown-item" href="#" name="target" id="<%=target.target%>" style="font-family: 'Montserrat', sans-serif;"><%=target.target%></a></li>
             <% } %>
         </ul>
       </div>
@@ -18,7 +18,7 @@
         </button>
         <ul class="dropdown-menu">
           <% for (part of parts) { %>
-          <li><a class="dropdown-item" href="#" name="bodyPart" id="<%=part.bodyPart%>"><%=part.bodyPart%></a></li>
+          <li><a class="dropdown-item" href="#" name="bodyPart" id="<%=part.bodyPart%>" style="font-family: 'Montserrat', sans-serif;"><%=part.bodyPart%></a></li>
             <% } %>
         </ul>
       </div> 
@@ -37,11 +37,11 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header" style="border:none; background-color: #313131; color:white;">
-            <h5 class="modal-title">Workout Information</h5>
+            <h5 class="modal-title" style="font-family: 'Nunito', sans-serif;">Workout Information</h5>
             <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" style="background-color:white;"></button>
           </div>
           <div class="modal-body">
-            <div id="workoutInfo"></div>
+            <div id="workoutInfo" style="font-family: 'Montserrat', sans-serif;"></div>
           </div>
           <div class="modal-footer" style="border:none;">
             <button type="button" class="btn btn-fit" data-dismiss="modal">Close</button>

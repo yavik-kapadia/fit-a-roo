@@ -7,9 +7,9 @@
     <br><br><br>
     <h1 class="display-1">Wellness Matters.</h1><br>
     <h3 class="display-3">Take the first step today. </h3><br>
-    <h5 Class="display-5">Join Fit-A-Roo</h5><br>
+    <h5 Class="display-5">Join Fit-<span class="red-a">A</span>-Roo</h5><br>
 <%if (!locals.session.loggedin) { %>
- <a href="/signup" class = "btn btn-lg btn-fit read"> Sign Up </a>
+ <a href="/signup" class = "btn btn-lg btn-fit read" style="font-family: 'Nunito', sans-serif;"> Sign Up </a>
   <%}else{%>
     <a href="/profile" class = "btn btn-lg btn-fit read"> View Profile </a>
     <%}%>

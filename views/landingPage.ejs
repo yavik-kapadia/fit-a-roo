@@ -15,28 +15,48 @@
             <br>
         </div>
       <div style="padding: 10px;">
-        <h2 class="text-black">Previous Workout Stats:</h2>
-        <p class="text-black">Last login: <%= userId[0].lastLogin %></p>
-        <p class="text-black">Last workout: </p>
-        <p class="text-black">Last duration: </p>
-
-        <%for(var sess of workouts){%>
-        <%if(sess.status === 0){%>
-            <p>Session: <%= sess.sessionId %>: <%= sess.startTime %> </p>
-            <form method ="post" action="/workout/resume">
+       
+        <p class="text-black" style="font-family: 'Montserrat', sans-serif;">Last login: <%= userId[0].lastLogin %></p>
+ <h2 class="text-black" style="font-family: 'Montserrat', sans-serif;">Previous Workout:</h2>
+         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#tableData" aria-expanded="false" aria-controls="collapseExample" style="font-family: 'Nunito', sans-serif;">
+    View
+  </button>
+<div class="sessionsTable">
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">SessionId</th>
+      <th scope="col">TimeStamp</th>
+      <th scope="col">Resume?</th>
+    </tr>
+  </thead>
+  <tbody class="collapse" id="tableData">
+    <%for(var sess of workouts){%>
+      
+            <tr>
+              <td> <%= sess.sessionId %></td>
+              <td>
+                <%= sess.startTime %></td>
+              <td>
+                <form method ="post" action="/workout/resume">
                 <input type="hidden" name="sessionId" value="<%= sess.sessionId %>">
                 <input type="hidden" name="userId" value="<%= userId[0].userId %>">
                 <button class="btn btn-dark">Resume</button>
             </form>
+              </td>
+            </tr>
+
         <%}%>
-        <%}%>
+        </tbody>
+        </table>
+</div>
         <br>
         <a href="/workout" class="btn btn-fit">Start New Workout</a> <br><br><br>
 
         <div class="text-center">
           <a href="/profile/edit?userId=<%= userId[0].userId %>" class="btn btn-fit">Update Profile</a>
   
-          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal" style="margin-left:1rem;">
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal" style="margin-left:1rem; font-family: 'Nunito', sans-serif;">
               Delete Profile
           </button>
         </div>
@@ -54,9 +74,9 @@
                         </button>
                     </div>
                     <div class="modal-footer">
-                        <a href="/profile/delete?userId=<%= userId[0].userId %>" type="button" class="btn btn-danger">Confirm
+                        <a href="/profile/delete?userId=<%= userId[0].userId %>" type="button" class="btn btn-danger" style="font-family: 'Nunito', sans-serif;">Confirm
                             Delete</a>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="font-family: 'Nunito', sans-serif;">Cancel</button>
                     </div>
                 </div>
             </div>
